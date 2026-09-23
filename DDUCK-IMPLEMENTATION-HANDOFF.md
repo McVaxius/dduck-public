@@ -12,7 +12,7 @@ Use Git for ordinary tracked-source recovery. Preserve the established release w
 
 ## Already prepared
 
-`Z:\dduck-public` is a newly initialized local Git repository with no commits or remote. Its complete source includes `Plugin.cs`, `IntroductionWindow.cs`, `IModule.cs`, `ModuleLoader.cs`, `ModulePackage.cs`, `PrivateManifest.cs`, `BuildInfo.cs`, `TrustAnchor.cs`, `DDuck.csproj`, `DDuck.json`, the original icon, and a focused offline host-contract regression. Everything is unstaged.
+`Z:\dduck-public` contains the complete shell source: `Plugin.cs`, `IntroductionWindow.cs`, `IModule.cs`, `ModuleLoader.cs`, `ModulePackage.cs`, `PrivateManifest.cs`, `BuildInfo.cs`, `TrustAnchor.cs`, `DDuck.csproj`, `DDuck.json`, the original icon, and a focused offline host-contract regression. Re-read its current Git state; the repository now has origin `https://github.com/McVaxius/dduck-public.git` and uses `master`.
 
 The host implements both `/dduck` and `/dd`, distinct main/config UI forwarding, all three access IPC endpoints, authenticated module loading, JSON/carrier binding, and safe registration rollback/disposal. `PrivateManifest.cs` was copied byte-for-byte from the working public host. This is a complete shell, not an introduction-only plugin.
 
@@ -26,7 +26,7 @@ Z:\!cryptography\DDuck\publisher-private.pem
 
 It was created with the shared workflow's existing protected-directory permission handling. `dduck-public\TrustAnchor.cs` contains its matching public key. Reuse this exact pair. Do not rotate, replace with another plugin's identity, copy the private key into a repo/package, or print it. Missing identity must fail with a restore instruction.
 
-No publication destination was inferred: public `repo.json` is intentionally `[]`, and no remote repository/release exists as a result of this work. Package-manager DDuck support is not yet verified.
+The follow-up public setup adds `.github/workflows/build-release.yml` using the MOM/DhogNav workflow on DDuck's `master` branch, `v*` tags, and manual dispatch. Public `repo.json` points to the existing `McVaxius/dduck-public` origin's latest release. Bumper H includes `DDuck-public`, updating public metadata while retaining the stable ABI. These local changes do not authorize pushing, running Actions, or publishing. Package-manager DDuck support is not yet verified.
 
 ## Fixed host and package contract
 
@@ -151,7 +151,7 @@ Suggested `Z:\DDuck\xapr\project.json`:
 }
 ```
 
-`public_project` and similar aliases retain the workflow's source-recovery archive layout. `workflow.input_path()` maps them to the real public repository; do not create duplicate host source under `Z:\DDuck\DDuck` to satisfy these strings. Keep publication configuration empty until a real destination is chosen.
+`public_project` and similar aliases retain the workflow's source-recovery archive layout. `workflow.input_path()` maps them to the real public repository; do not create duplicate host source under `Z:\DDuck\DDuck` to satisfy these strings. Keep the private publisher configuration empty unless explicitly configured for publication; the public GitHub workflow already uses the public repository's own release destination.
 
 ## Extend the existing shared selectors, preserve the full build
 

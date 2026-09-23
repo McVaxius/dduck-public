@@ -14,6 +14,10 @@ dotnet build Z:\dduck-public\DDuck.csproj -c Release -p:Platform=x64
 
 The public package is `bin\x64\Release\DDuck\latest.zip`. It contains only the host, manifest, icon, README, license and notices. Signing keys and private automation source are not build inputs.
 
+GitHub Actions uses `.github/workflows/build-release.yml` to build and release on pushes to `master`, `v*` tags, or a manual workflow run. It installs .NET 10, downloads Dalamud references, builds this repository, and attaches `latest.zip` and `DDuck.json` to the versioned release, following the MOM/DhogNav public workflow.
+
+Version bumper H (`Z:\dhogbump\bump_gui_h.py`) includes a separate `DDuck-public` row. It updates the public project, BuildInfo, manifest and repository feed together while preserving CLR ABI `1.0.0.0` and DDuck's private version.
+
 Run the offline host contract regression with:
 
 ```powershell
@@ -28,7 +32,7 @@ Keep the host enabled while installing access updates. Use a package manager wit
 
 The implementation migration is described in [DDUCK-IMPLEMENTATION-HANDOFF.md](DDUCK-IMPLEMENTATION-HANDOFF.md). After that migration, `Z:\dduckprivate.bat` builds the real private package. It reports the missing prerequisite until the DDuck private project exists.
 
-No publication destination is configured. `repo.json` is intentionally empty until a real public release location is selected. No remote repository was created by this preparation.
+`repo.json` points to the latest public release in [McVaxius/dduck-public](https://github.com/McVaxius/dduck-public). Preparing the local workflow does not publish a release; it runs after an authorized push or manual GitHub dispatch.
 
 ## Community and license
 
