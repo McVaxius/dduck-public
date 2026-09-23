@@ -1,0 +1,41 @@
+<Project Sdk="Dalamud.NET.Sdk/15.0.0">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <AssemblyName>DDuck</AssemblyName>
+    <RootNamespace>DDuck.PublicShell</RootNamespace>
+    <Version>0.0.0.3</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <GenerateRepositoryUrlAttribute>false</GenerateRepositoryUrlAttribute>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <DebugType>none</DebugType>
+    <IsPackable>false</IsPackable>
+    <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
+    <Use_DalamudPackager>false</Use_DalamudPackager>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Plugin.cs" />
+    <Compile Include="IntroductionWindow.cs;IModule.cs;ModuleLoader.cs;ModulePackage.cs;BuildInfo.cs;TrustAnchor.cs;PrivateManifest.cs" />
+    <None Include="DDuck.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="icon.png" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <Target Name="PackagePublicHost" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <!-- Package explicit public files; the CLR ABI version stays 1.0.0.0. -->
+    <PropertyGroup><_PublicPackageDir>$(IntermediateOutputPath)public-package/</_PublicPackageDir></PropertyGroup>
+    <RemoveDir Directories="$(_PublicPackageDir)" />
+    <MakeDir Directories="$(_PublicPackageDir);$(TargetDir)$(AssemblyName)" />
+    <ItemGroup>
+      <_PublicPackageFiles Include="$(TargetPath);$(ProjectDir)$(AssemblyName).json;$(ProjectDir)icon.png;$(ProjectDir)README.md;$(ProjectDir)LICENSE;$(ProjectDir)THIRD-PARTY-NOTICES.txt" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_PublicPackageFiles)" DestinationFolder="$(_PublicPackageDir)" />
+    <Copy SourceFiles="$(ProjectDir)$(AssemblyName).json" DestinationFolder="$(TargetDir)$(AssemblyName)" />
+    <ZipDirectory SourceDirectory="$(_PublicPackageDir)" DestinationFile="$(TargetDir)$(AssemblyName)/latest.zip" Overwrite="true" />
+  </Target>
+</Project>

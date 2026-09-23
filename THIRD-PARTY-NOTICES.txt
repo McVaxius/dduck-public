@@ -1,0 +1,73 @@
+# Third-party notices
+
+## BossmodReborn / BossMod
+
+Reference for the retained POTD room coordinates, trap observations, transformation mechanics and minimal ground-input seam (the embedded engine, Clipper2, HashCode and xxHash implementations were removed):
+`FFXIV-CombatReborn/BossmodReborn@fb9bb56cc06735635e0f25f028ef5df875472309`.
+
+POTD floor-set 6-20 room centers were extended from the existing local
+BossmodReborn source at revision `839861060` (LoadedFloors.cs). Earlier
+DDuck room centers remain unchanged. No BMR assembly or engine is embedded.
+HoH/EO room centers for their ten floor sets use the two ordinary layouts in
+`LoadedFloors.cs` at `8e15ce90b841eddc9a0d606aae8579272582e8e8`.
+The initialization mapping follows `WorldStateGameSync.cs` at that revision;
+Hall of Fallacies and PT layouts are not inferred from those coordinates.
+The existing `KnownPotdTraps.cs` table now includes all forty territories from
+`Global/DeepDungeon/TrapData.cs` at tag `7.5.6.14` (`8e15ce90`), plus the eight
+revealed trap object IDs from `AutoClear.cs`. The full table has 14,176 historical
+Palace Pal observations covering POTD, HoH and EO; PT positions are not inferred.
+The original five POTD territory tables were preserved unchanged. Historical
+points guide path preference; native revealed traps remain actual exclusions.
+Completed floor-60/70/80 boss staging uses the arena center documented in
+`SharedBounds.cs` at that same revision; passage interaction still uses the
+locally observed native object.
+Floor-100 completed-passage staging uses an interior point of the arena polygon
+in `DD100NybethObdilord.cs`, corroborated by local passage visibility on that floor.
+The floor-180 manual burst window follows `DD180Dendainsonne.ManualBurst`
+at the same revision; DDuck's existing action handoff handles that window.
+Floor-90 Grey Bomb and floor-100 Corse targeting follow the encounter add
+components in `DD90TheGodmother.cs` and `DD100NybethObdilord.cs` at that revision.
+The same targeting review includes `DD120Kirtimukha.cs`, `DD140AhPuch.cs`
+and `DD190TheGodfather.cs` for Hornet, Follower and Remedy Bomb adds.
+Floor-150 role-specific boss/zombie priorities follow `DD150Tisiphone.BossAdds`
+at the same revision; BMR continues to own its zombie avoidance mechanics.
+
+BossmodReborn preserves the BossMod lineage of Andrew Gilewsky and the
+Deep Dungeon/autorotation work associated with Xan/Veyn, with later work by the
+Combat Reborn team and contributors credited in the upstream source, including
+Malediktus and Akechi. CarnifexOptimus authored the selected snapshot commit.
+Per-file upstream attribution and project history remain the authoritative
+module-level provenance records.
+
+BSD 3-Clause License
+
+Copyright (c) 2022-2024, Andrew Gilewsky
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its contributors
+   may be used to endorse or promote products derived from this software
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+POTD trap observations in KnownPotdTraps.cs were selected from this snapshot's
+TrapData.cs, which credits PalacePal as the data source. No PalacePal plugin code
+is included. All dungeon logic in the replacement runtime is maintained by DDuck.

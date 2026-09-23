@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/goatcorp/Dalamud/master/Dalamud/Configuration/PluginManifest/pluginmanifest.schema.json",
+  "Author": "DhogGPT",
+  "Name": "Deep Ducking",
+  "Punchline": "Deep Ducking public host and authenticated module access.",
+  "Description": "The Deep Ducking public host provides the introduction, community links and authenticated loading of separately supplied DDuck modules. Open with /dduck or /dd.",
+  "InternalName": "DDuck",
+  "AssemblyVersion": "0.0.0.3",
+  "ApplicableVersion": "any",
+  "DalamudApiLevel": 15,
+  "Tags": [
+    "ffxiv",
+    "dduck",
+    "deep-dungeon",
+    "dhog"
+  ],
+  "CategoryTags": [
+    "utility"
+  ]
+}
