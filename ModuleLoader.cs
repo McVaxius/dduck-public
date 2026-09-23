@@ -96,11 +96,14 @@ internal sealed class ModuleLoader : IDisposable
 
     private static void ReportFailure(string stage, Exception error)
     {
-        Plugin.Log?.Error(error, "[Access] Failed while {Stage} (host {Version}).", stage, BuildInfo.Version);
-        // ReflectionTypeLoadException does not include each dependency error in its normal stack trace.
-        if (error is ReflectionTypeLoadException types)
-            foreach (var loaderError in types.LoaderExceptions)
-                if (loaderError != null) Plugin.Log?.Error(loaderError, "[Access] Entry-point dependency load failed.");
+        try
+        {
+            Plugin.Log?.Error(error, "[Access] Failed while {Stage} (host {Version}).", stage, BuildInfo.Version);
+            if (error is ReflectionTypeLoadException types)
+                foreach (var loaderError in types.LoaderExceptions)
+                    if (loaderError != null) Plugin.Log?.Error(loaderError, "[Access] Entry-point dependency load failed.");
+        }
+        catch { /* Logging must not interrupt candidate disposal or context unloading. */ }
     }
 
     public void Dispose()

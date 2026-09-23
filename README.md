@@ -2,7 +2,7 @@
 
 This repository contains the complete DDuck public host: introduction, authenticated module loader, manifest validation, and access IPC. Open it with `/dduck` or `/dd`. Automation source remains in `Z:\DDuck`; the public shell builds independently.
 
-The public version is **0.0.0.3**. Its CLR assembly identity is **1.0.0.0**, the stable module ABI. Private module versions advance independently.
+The public version is **0.1.0.0**. Its CLR assembly identity is **1.0.0.0**, the stable module ABI. Private module versions advance independently.
 
 ## Build
 
@@ -30,7 +30,7 @@ The host exposes `DDuck.Access.Directory.v1`, `DDuck.Access.Validate.v1` and `DD
 
 Keep the host enabled while installing access updates. Use a package manager with DDuck access support and follow the package's installation instructions. Click **Check installed access** to load an installed update. Package-manager integration and live client behavior have not been verified here.
 
-The implementation migration is described in [DDUCK-IMPLEMENTATION-HANDOFF.md](DDUCK-IMPLEMENTATION-HANDOFF.md). After that migration, `Z:\dduckprivate.bat` builds the real private package. It reports the missing prerequisite until the DDuck private project exists.
+The implementation migration is described in [DDUCK-IMPLEMENTATION-HANDOFF.md](DDUCK-IMPLEMENTATION-HANDOFF.md). `Z:\dduckprivate.bat` now builds the real private package from repository-owned implementation and an independent ABI reference. Loader error reporting is contained so a logging failure cannot prevent module disposal or context unloading. Offline verification does not establish live client or package-manager acceptance.
 
 `repo.json` points to the latest public release in [McVaxius/dduck-public](https://github.com/McVaxius/dduck-public). Preparing the local workflow does not publish a release; it runs after an authorized push or manual GitHub dispatch.
 
