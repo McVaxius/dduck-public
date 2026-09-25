@@ -34,7 +34,7 @@ public sealed class Plugin : IDalamudPlugin
             windows.AddWindow(introduction);
             foreach (var command in new[] { "/dduck", "/dd" })
             {
-                if (!commands.AddHandler(command, new CommandInfo(OnCommand) { HelpMessage = "Open Deep Ducking." }))
+                if (!commands.AddHandler(command, new CommandInfo(OnCommand) { HelpMessage = "Open Deep Ducking. /dd help opens the command guide (full module required). /dduck is an alias." }))
                     throw new InvalidOperationException($"The {command} command is already registered.");
                 cleanup.Add(() => commands.RemoveHandler(command));
             }
