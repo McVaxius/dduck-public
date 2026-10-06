@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="About" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="About and access installation" xml:space="preserve">
+    <value>关于与访问安装</value>
+  </data>
+  <data name="Access" xml:space="preserve">
+    <value>访问</value>
+  </data>
+  <data name="Access could not initialize. Check /xllog for [Access] details." xml:space="preserve">
+    <value>无法初始化访问。请在 /xllog 中查看 [Access] 详情。</value>
+  </data>
+  <data name="After installing an update, click Check installed access or restart DDuck. Open /dduck or /dd to use the module." xml:space="preserve">
+    <value>安装更新后，点击“检查已安装的访问”或重启 DDuck。使用 /dduck 或 /dd 打开模块。</value>
+  </data>
+  <data name="Blue" xml:space="preserve">
+    <value>蓝色</value>
+  </data>
+  <data name="By McVaxius  |  Version {0}" xml:space="preserve">
+    <value>作者 McVaxius  |  版本 {0}</value>
+  </data>
+  <data name="Check installed access" xml:space="preserve">
+    <value>检查已安装的访问</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>颜色</value>
+  </data>
+  <data name="COMMUNITY AND SUPPORT" xml:space="preserve">
+    <value>社区与支持</value>
+  </data>
+  <data name="Compact mode" xml:space="preserve">
+    <value>紧凑模式</value>
+  </data>
+  <data name="Custom RGB" xml:space="preserve">
+    <value>自定义 RGB</value>
+  </data>
+  <data name="D E E P  D U C K I N G" xml:space="preserve">
+    <value>D E E P  D U C K I N G</value>
+  </data>
+  <data name="Deep Ducking provides Deep Dungeon automation through a separately supplied module. This public plugin provides the introduction and loads authenticated DDuck modules." xml:space="preserve">
+    <value>Deep Ducking 通过单独提供的模块实现深层迷宫自动化。此公开插件提供介绍并加载已认证的 DDuck 模块。</value>
+  </data>
+  <data name="Deep Ducking v{0}" xml:space="preserve">
+    <value>Deep Ducking v{0}</value>
+  </data>
+  <data name="Deep Dungeon automation" xml:space="preserve">
+    <value>深层迷宫自动化</value>
+  </data>
+  <data name="Deep Dungeon automation for FINAL FANTASY XIV through a separately supplied module." xml:space="preserve">
+    <value>通过单独提供的模块实现 FINAL FANTASY XIV 深层迷宫自动化。</value>
+  </data>
+  <data name="Entering" xml:space="preserve">
+    <value>正在进入</value>
+  </data>
+  <data name="Follower" xml:space="preserve">
+    <value>跟随者</value>
+  </data>
+  <data name="Get help, share feedback, or support the project." xml:space="preserve">
+    <value>获取帮助、分享反馈或支持项目。</value>
+  </data>
+  <data name="Held" xml:space="preserve">
+    <value>已暂停</value>
+  </data>
+  <data name="Idle" xml:space="preserve">
+    <value>空闲</value>
+  </data>
+  <data name="InDuty" xml:space="preserve">
+    <value>副本中</value>
+  </data>
+  <data name="Install your access download, then check installed access." xml:space="preserve">
+    <value>安装下载的访问包，然后检查已安装的访问。</value>
+  </data>
+  <data name="INSTALL YOUR ACCESS UPDATE" xml:space="preserve">
+    <value>安装访问更新</value>
+  </data>
+  <data name="Join the community" xml:space="preserve">
+    <value>加入社区</value>
+  </data>
+  <data name="Keep this public plugin installed and enabled. Follow the installation instructions supplied with your DDuck access package. The package manager must support DDuck access updates." xml:space="preserve">
+    <value>请保持此公开插件已安装并启用。按照 DDuck 访问包附带的说明安装。包管理器必须支持 DDuck 访问更新。</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="Leader" xml:space="preserve">
+    <value>队长</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>正在离开</value>
+  </data>
+  <data name="Loading UI fonts..." xml:space="preserve">
+    <value>正在加载界面字体…</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="NotReady" xml:space="preserve">
+    <value>未就绪</value>
+  </data>
+  <data name="off" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="on" xml:space="preserve">
+    <value>开启</value>
+  </data>
+  <data name="Open Discord" xml:space="preserve">
+    <value>打开 Discord</value>
+  </data>
+  <data name="Pink" xml:space="preserve">
+    <value>粉色</value>
+  </data>
+  <data name="Preparing" xml:space="preserve">
+    <value>准备中</value>
+  </data>
+  <data name="Public access host" xml:space="preserve">
+    <value>公开访问宿主</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>就绪</value>
+  </data>
+  <data name="ReadyToStart" xml:space="preserve">
+    <value>可开始</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>恢复中</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>已拒绝</value>
+  </data>
+  <data name="Solo" xml:space="preserve">
+    <value>单人</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>已停止</value>
+  </data>
+  <data name="Support on Ko-fi" xml:space="preserve">
+    <value>在 Ko-fi 上支持</value>
+  </data>
+  <data name="Teal" xml:space="preserve">
+    <value>青绿色</value>
+  </data>
+  <data name="UI fonts failed to load. See the plugin log." xml:space="preserve">
+    <value>界面字体加载失败。请查看插件日志。</value>
+  </data>
+  <data name="Unclaimed" xml:space="preserve">
+    <value>未占用</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="Visit The Dumpster Fire community on Discord for plugin discussion and to arrange access with McVaxius. Support on Ko-fi is welcome; module access is granted privately." xml:space="preserve">
+    <value>欢迎在 Discord 的 The Dumpster Fire 社区讨论插件并与 McVaxius 协商访问。欢迎通过 Ko-fi 支持；模块访问由作者私下授予。</value>
+  </data>
+  <data name="Window appearance" xml:space="preserve"><value>窗口外观</value></data>
+  <data name="Compact visible on main window" xml:space="preserve"><value>在主窗口显示紧凑模式开关</value></data>
+  <data name="Language visible on main window" xml:space="preserve"><value>在主窗口显示语言选择</value></data>
+  <data name="Transparency" xml:space="preserve"><value>透明度</value></data>
+  <data name="Opacity (%)" xml:space="preserve"><value>不透明度 (%)</value></data>
+  <data name="Auto-fade when unfocused" xml:space="preserve"><value>失去焦点后自动淡化</value></data>
+  <data name="Unfocused opacity (%)" xml:space="preserve"><value>未聚焦时的不透明度 (%)</value></data>
+  <data name="Unfocused delay (seconds)" xml:space="preserve"><value>失去焦点后的等待时间 (秒)</value></data>
+</root>

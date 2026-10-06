@@ -4,7 +4,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <AssemblyName>DDuck</AssemblyName>
     <RootNamespace>DDuck.PublicShell</RootNamespace>
-    <Version>0.2.2.0</Version>
+    <Version>1.0.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
@@ -12,7 +12,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>none</DebugType>
     <IsPackable>false</IsPackable>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
@@ -23,6 +23,10 @@
   <ItemGroup>
     <Compile Include="Plugin.cs" />
     <Compile Include="IntroductionWindow.cs;IModule.cs;ModuleLoader.cs;ModulePackage.cs;BuildInfo.cs;TrustAnchor.cs;PrivateManifest.cs" />
+    <Compile Include="AppearancePreferences.cs;Ui/**/*.cs" />
+    <EmbeddedResource Include="Localization/Strings_*.resx" LogicalName="DDuck.PublicShell.Localization.%(Filename).resources" WithCulture="false" />
+    <ProjectReference Include="../aethertekUI/src/AethertekUI/AethertekUI.csproj" />
+    <ProjectReference Include="../aethertekUI/src/AethertekUI.Dalamud/AethertekUI.Dalamud.csproj" />
     <None Include="DDuck.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="icon.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
@@ -32,7 +36,7 @@
     <RemoveDir Directories="$(_PublicPackageDir)" />
     <MakeDir Directories="$(_PublicPackageDir);$(TargetDir)$(AssemblyName)" />
     <ItemGroup>
-      <_PublicPackageFiles Include="$(TargetPath);$(ProjectDir)$(AssemblyName).json;$(ProjectDir)icon.png;$(ProjectDir)README.md;$(ProjectDir)LICENSE;$(ProjectDir)THIRD-PARTY-NOTICES.txt" />
+      <_PublicPackageFiles Include="$(TargetPath);$(TargetDir)AethertekUI.dll;$(TargetDir)AethertekUI.Dalamud.dll;$(ProjectDir)$(AssemblyName).json;$(ProjectDir)icon.png;$(ProjectDir)README.md;$(ProjectDir)LICENSE;$(ProjectDir)THIRD-PARTY-NOTICES.txt" />
     </ItemGroup>
     <Copy SourceFiles="@(_PublicPackageFiles)" DestinationFolder="$(_PublicPackageDir)" />
     <Copy SourceFiles="$(ProjectDir)$(AssemblyName).json" DestinationFolder="$(TargetDir)$(AssemblyName)" />

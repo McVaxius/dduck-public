@@ -18,6 +18,7 @@ public sealed class Plugin : IDalamudPlugin
     private readonly WindowSystem windows = new("DDuck.Information");
     private readonly ModuleLoader loader = new();
     private readonly IntroductionWindow introduction;
+    private readonly Ui.PublicAppearance appearance;
     private readonly List<Action> cleanup = [];
     private int disposed;
     private bool IsDisposed => Volatile.Read(ref disposed) != 0;
@@ -27,9 +28,13 @@ public sealed class Plugin : IDalamudPlugin
         this.pluginInterface = pluginInterface;
         this.commands = commands;
         Log = log;
-        introduction = new IntroductionWindow(pluginInterface, textures, loader, RefreshAccess);
         try
         {
+            var preferences = new Ui.PreferencePersistence(pluginInterface);
+            AppearancePreferences.Initialize(preferences.Load, preferences.Save);
+            appearance = new Ui.PublicAppearance(pluginInterface, textures);
+            cleanup.Add(appearance.Dispose);
+            introduction = new IntroductionWindow(pluginInterface, textures, loader, RefreshAccess, appearance);
             cleanup.Add(windows.RemoveAllWindows);
             windows.AddWindow(introduction);
             foreach (var command in new[] { "/dduck", "/dd" })
@@ -98,10 +103,10 @@ public sealed class Plugin : IDalamudPlugin
     {
         if (IsDisposed) return;
         if (loader.Module is { } module) module.OnCommand("/dduck", "config");
-        else introduction.IsOpen = true;
+        else introduction.OpenSettings();
     }
 
-    private void Draw() { if (IsDisposed) return; windows.Draw(); loader.Module?.Draw(); }
+    private void Draw() { if (IsDisposed) return; appearance.Draw(windows); loader.Module?.Draw(); }
 
     public void Dispose()
     {

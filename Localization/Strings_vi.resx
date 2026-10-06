@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="About" xml:space="preserve">
+    <value>Giới thiệu</value>
+  </data>
+  <data name="About and access installation" xml:space="preserve">
+    <value>Giới thiệu và cài đặt quyền truy cập</value>
+  </data>
+  <data name="Access" xml:space="preserve">
+    <value>Quyền truy cập</value>
+  </data>
+  <data name="Access could not initialize. Check /xllog for [Access] details." xml:space="preserve">
+    <value>Không thể khởi tạo quyền truy cập. Kiểm tra /xllog để xem chi tiết [Access].</value>
+  </data>
+  <data name="After installing an update, click Check installed access or restart DDuck. Open /dduck or /dd to use the module." xml:space="preserve">
+    <value>Sau khi cài bản cập nhật, nhấn Kiểm tra quyền truy cập đã cài hoặc khởi động lại DDuck. Mở /dduck hoặc /dd để dùng mô-đun.</value>
+  </data>
+  <data name="Blue" xml:space="preserve">
+    <value>Xanh dương</value>
+  </data>
+  <data name="By McVaxius  |  Version {0}" xml:space="preserve">
+    <value>Bởi mcvaxius  |  Phiên bản {0}</value>
+  </data>
+  <data name="Check installed access" xml:space="preserve">
+    <value>Kiểm tra quyền truy cập đã cài</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Màu</value>
+  </data>
+  <data name="COMMUNITY AND SUPPORT" xml:space="preserve">
+    <value>CỘNG ĐỒNG VÀ HỖ TRỢ</value>
+  </data>
+  <data name="Compact mode" xml:space="preserve">
+    <value>Chế độ gọn</value>
+  </data>
+  <data name="Custom RGB" xml:space="preserve">
+    <value>RGB tùy chỉnh</value>
+  </data>
+  <data name="D E E P  D U C K I N G" xml:space="preserve">
+    <value>D E E P  D U C K I N G</value>
+  </data>
+  <data name="Deep Ducking provides Deep Dungeon automation through a separately supplied module. This public plugin provides the introduction and loads authenticated DDuck modules." xml:space="preserve">
+    <value>Deep Ducking cung cấp tự động hóa Deep Dungeon qua mô-đun được cung cấp riêng. Plugin công khai này hiển thị phần giới thiệu và tải các mô-đun DDuck đã được xác thực.</value>
+  </data>
+  <data name="Deep Ducking v{0}" xml:space="preserve">
+    <value>Deep Ducking v{0}</value>
+  </data>
+  <data name="Deep Dungeon automation" xml:space="preserve">
+    <value>Tự động hóa Deep Dungeon</value>
+  </data>
+  <data name="Deep Dungeon automation for FINAL FANTASY XIV through a separately supplied module." xml:space="preserve">
+    <value>Tự động hóa Deep Dungeon cho FINAL FANTASY XIV qua mô-đun được cung cấp riêng.</value>
+  </data>
+  <data name="Entering" xml:space="preserve">
+    <value>Đang vào</value>
+  </data>
+  <data name="Follower" xml:space="preserve">
+    <value>Người theo</value>
+  </data>
+  <data name="Get help, share feedback, or support the project." xml:space="preserve">
+    <value>Nhận trợ giúp, chia sẻ phản hồi hoặc ủng hộ dự án.</value>
+  </data>
+  <data name="Held" xml:space="preserve">
+    <value>Đang giữ</value>
+  </data>
+  <data name="Idle" xml:space="preserve">
+    <value>Chờ</value>
+  </data>
+  <data name="InDuty" xml:space="preserve">
+    <value>Trong nhiệm vụ</value>
+  </data>
+  <data name="Install your access download, then check installed access." xml:space="preserve">
+    <value>Cài bản tải xuống để truy cập, rồi kiểm tra quyền truy cập đã cài.</value>
+  </data>
+  <data name="INSTALL YOUR ACCESS UPDATE" xml:space="preserve">
+    <value>CÀI BẢN CẬP NHẬT TRUY CẬP</value>
+  </data>
+  <data name="Join the community" xml:space="preserve">
+    <value>Tham gia cộng đồng</value>
+  </data>
+  <data name="Keep this public plugin installed and enabled. Follow the installation instructions supplied with your DDuck access package. The package manager must support DDuck access updates." xml:space="preserve">
+    <value>Giữ plugin công khai này được cài đặt và bật. Làm theo hướng dẫn cài đặt đi kèm gói truy cập DDuck của bạn. Trình quản lý gói phải hỗ trợ các bản cập nhật truy cập DDuck.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Ngôn ngữ</value>
+  </data>
+  <data name="Leader" xml:space="preserve">
+    <value>Trưởng nhóm</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Đang rời</value>
+  </data>
+  <data name="Loading UI fonts..." xml:space="preserve">
+    <value>Đang tải phông chữ giao diện...</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Không có</value>
+  </data>
+  <data name="NotReady" xml:space="preserve">
+    <value>Chưa sẵn sàng</value>
+  </data>
+  <data name="off" xml:space="preserve">
+    <value>tắt</value>
+  </data>
+  <data name="on" xml:space="preserve">
+    <value>bật</value>
+  </data>
+  <data name="Open Discord" xml:space="preserve">
+    <value>Mở Discord</value>
+  </data>
+  <data name="Pink" xml:space="preserve">
+    <value>Hồng</value>
+  </data>
+  <data name="Preparing" xml:space="preserve">
+    <value>Đang chuẩn bị</value>
+  </data>
+  <data name="Public access host" xml:space="preserve">
+    <value>Plugin truy cập công khai</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>Sẵn sàng</value>
+  </data>
+  <data name="ReadyToStart" xml:space="preserve">
+    <value>Sẵn sàng bắt đầu</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>Đang khôi phục</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Bị từ chối</value>
+  </data>
+  <data name="Solo" xml:space="preserve">
+    <value>Một mình</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>Đã dừng</value>
+  </data>
+  <data name="Support on Ko-fi" xml:space="preserve">
+    <value>Ủng hộ trên Ko-fi</value>
+  </data>
+  <data name="Teal" xml:space="preserve">
+    <value>Xanh ngọc</value>
+  </data>
+  <data name="UI fonts failed to load. See the plugin log." xml:space="preserve">
+    <value>Không tải được phông chữ giao diện. Xem nhật ký plugin.</value>
+  </data>
+  <data name="Unclaimed" xml:space="preserve">
+    <value>Chưa nhận</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>Không rõ</value>
+  </data>
+  <data name="Visit The Dumpster Fire community on Discord for plugin discussion and to arrange access with McVaxius. Support on Ko-fi is welcome; module access is granted privately." xml:space="preserve">
+    <value>Ghé cộng đồng The Dumpster Fire trên Discord để thảo luận về plugin và trao đổi quyền truy cập với mcvaxius. Bạn có thể ủng hộ trên Ko-fi; quyền truy cập mô-đun được cấp riêng.</value>
+  </data>
+  <data name="Window appearance" xml:space="preserve"><value>Giao diện cửa sổ</value></data>
+  <data name="Compact visible on main window" xml:space="preserve"><value>Hiển thị chế độ gọn trên cửa sổ chính</value></data>
+  <data name="Language visible on main window" xml:space="preserve"><value>Hiển thị lựa chọn ngôn ngữ trên cửa sổ chính</value></data>
+  <data name="Transparency" xml:space="preserve"><value>Độ trong suốt</value></data>
+  <data name="Opacity (%)" xml:space="preserve"><value>Độ đục (%)</value></data>
+  <data name="Auto-fade when unfocused" xml:space="preserve"><value>Tự giảm độ đục khi mất tiêu điểm</value></data>
+  <data name="Unfocused opacity (%)" xml:space="preserve"><value>Độ đục khi mất tiêu điểm (%)</value></data>
+  <data name="Unfocused delay (seconds)" xml:space="preserve"><value>Độ trễ khi mất tiêu điểm (giây)</value></data>
+</root>

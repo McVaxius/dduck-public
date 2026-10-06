@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="About" xml:space="preserve">
+    <value>概要</value>
+  </data>
+  <data name="About and access installation" xml:space="preserve">
+    <value>概要とアクセスのインストール</value>
+  </data>
+  <data name="Access" xml:space="preserve">
+    <value>アクセス</value>
+  </data>
+  <data name="Access could not initialize. Check /xllog for [Access] details." xml:space="preserve">
+    <value>アクセスを初期化できませんでした。/xllog の [Access] 詳細を確認してください。</value>
+  </data>
+  <data name="After installing an update, click Check installed access or restart DDuck. Open /dduck or /dd to use the module." xml:space="preserve">
+    <value>更新のインストール後、「インストール済みアクセスを確認」を押すか DDuck を再起動してください。/dduck または /dd でモジュールを開きます。</value>
+  </data>
+  <data name="Blue" xml:space="preserve">
+    <value>青</value>
+  </data>
+  <data name="By McVaxius  |  Version {0}" xml:space="preserve">
+    <value>作者 McVaxius  |  バージョン {0}</value>
+  </data>
+  <data name="Check installed access" xml:space="preserve">
+    <value>インストール済みアクセスを確認</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>色</value>
+  </data>
+  <data name="COMMUNITY AND SUPPORT" xml:space="preserve">
+    <value>コミュニティとサポート</value>
+  </data>
+  <data name="Compact mode" xml:space="preserve">
+    <value>コンパクトモード</value>
+  </data>
+  <data name="Custom RGB" xml:space="preserve">
+    <value>カスタム RGB</value>
+  </data>
+  <data name="D E E P  D U C K I N G" xml:space="preserve">
+    <value>D E E P  D U C K I N G</value>
+  </data>
+  <data name="Deep Ducking provides Deep Dungeon automation through a separately supplied module. This public plugin provides the introduction and loads authenticated DDuck modules." xml:space="preserve">
+    <value>Deep Ducking は別途提供されるモジュールでディープダンジョンを自動化します。この公開プラグインは案内を表示し、認証済み DDuck モジュールを読み込みます。</value>
+  </data>
+  <data name="Deep Ducking v{0}" xml:space="preserve">
+    <value>Deep Ducking v{0}</value>
+  </data>
+  <data name="Deep Dungeon automation" xml:space="preserve">
+    <value>ディープダンジョンの自動化</value>
+  </data>
+  <data name="Deep Dungeon automation for FINAL FANTASY XIV through a separately supplied module." xml:space="preserve">
+    <value>別途提供されるモジュールによる FINAL FANTASY XIV のディープダンジョン自動化。</value>
+  </data>
+  <data name="Entering" xml:space="preserve">
+    <value>入場中</value>
+  </data>
+  <data name="Follower" xml:space="preserve">
+    <value>追従</value>
+  </data>
+  <data name="Get help, share feedback, or support the project." xml:space="preserve">
+    <value>サポートの利用、フィードバックの共有、プロジェクトへの支援。</value>
+  </data>
+  <data name="Held" xml:space="preserve">
+    <value>保留中</value>
+  </data>
+  <data name="Idle" xml:space="preserve">
+    <value>待機中</value>
+  </data>
+  <data name="InDuty" xml:space="preserve">
+    <value>コンテンツ内</value>
+  </data>
+  <data name="Install your access download, then check installed access." xml:space="preserve">
+    <value>ダウンロードしたアクセスをインストールし、インストール済みアクセスを確認してください。</value>
+  </data>
+  <data name="INSTALL YOUR ACCESS UPDATE" xml:space="preserve">
+    <value>アクセスの更新をインストール</value>
+  </data>
+  <data name="Join the community" xml:space="preserve">
+    <value>コミュニティに参加</value>
+  </data>
+  <data name="Keep this public plugin installed and enabled. Follow the installation instructions supplied with your DDuck access package. The package manager must support DDuck access updates." xml:space="preserve">
+    <value>この公開プラグインをインストールして有効にしたままにしてください。DDuck アクセスパッケージ付属の手順に従ってください。パッケージ管理ツールは DDuck のアクセス更新に対応している必要があります。</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>言語</value>
+  </data>
+  <data name="Leader" xml:space="preserve">
+    <value>リーダー</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>退出中</value>
+  </data>
+  <data name="Loading UI fonts..." xml:space="preserve">
+    <value>UI フォントを読み込み中…</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="NotReady" xml:space="preserve">
+    <value>準備未完了</value>
+  </data>
+  <data name="off" xml:space="preserve">
+    <value>オフ</value>
+  </data>
+  <data name="on" xml:space="preserve">
+    <value>オン</value>
+  </data>
+  <data name="Open Discord" xml:space="preserve">
+    <value>Discord を開く</value>
+  </data>
+  <data name="Pink" xml:space="preserve">
+    <value>ピンク</value>
+  </data>
+  <data name="Preparing" xml:space="preserve">
+    <value>準備中</value>
+  </data>
+  <data name="Public access host" xml:space="preserve">
+    <value>公開アクセスホスト</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>準備完了</value>
+  </data>
+  <data name="ReadyToStart" xml:space="preserve">
+    <value>開始可能</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>復旧中</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>拒否</value>
+  </data>
+  <data name="Solo" xml:space="preserve">
+    <value>ソロ</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>停止中</value>
+  </data>
+  <data name="Support on Ko-fi" xml:space="preserve">
+    <value>Ko-fi で支援</value>
+  </data>
+  <data name="Teal" xml:space="preserve">
+    <value>青緑</value>
+  </data>
+  <data name="UI fonts failed to load. See the plugin log." xml:space="preserve">
+    <value>UI フォントを読み込めませんでした。プラグインのログを確認してください。</value>
+  </data>
+  <data name="Unclaimed" xml:space="preserve">
+    <value>未所有</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="Visit The Dumpster Fire community on Discord for plugin discussion and to arrange access with McVaxius. Support on Ko-fi is welcome; module access is granted privately." xml:space="preserve">
+    <value>Discord の The Dumpster Fire コミュニティでプラグインについて話し合い、McVaxius にアクセスを相談してください。Ko-fi の支援も歓迎します。モジュールへのアクセスは個別に付与されます。</value>
+  </data>
+  <data name="Window appearance" xml:space="preserve"><value>ウィンドウの外観</value></data>
+  <data name="Compact visible on main window" xml:space="preserve"><value>メインウィンドウにコンパクト切替を表示</value></data>
+  <data name="Language visible on main window" xml:space="preserve"><value>メインウィンドウに言語選択を表示</value></data>
+  <data name="Transparency" xml:space="preserve"><value>透明度</value></data>
+  <data name="Opacity (%)" xml:space="preserve"><value>不透明度 (%)</value></data>
+  <data name="Auto-fade when unfocused" xml:space="preserve"><value>フォーカスがないときに自動で薄くする</value></data>
+  <data name="Unfocused opacity (%)" xml:space="preserve"><value>非フォーカス時の不透明度 (%)</value></data>
+  <data name="Unfocused delay (seconds)" xml:space="preserve"><value>非フォーカス時の待機時間 (秒)</value></data>
+</root>

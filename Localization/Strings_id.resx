@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="About" xml:space="preserve">
+    <value>Tentang</value>
+  </data>
+  <data name="About and access installation" xml:space="preserve">
+    <value>Tentang dan pemasangan akses</value>
+  </data>
+  <data name="Access" xml:space="preserve">
+    <value>Akses</value>
+  </data>
+  <data name="Access could not initialize. Check /xllog for [Access] details." xml:space="preserve">
+    <value>Akses tidak dapat diinisialisasi. Periksa /xllog untuk rincian [Access].</value>
+  </data>
+  <data name="After installing an update, click Check installed access or restart DDuck. Open /dduck or /dd to use the module." xml:space="preserve">
+    <value>Setelah memasang pembaruan, klik Periksa akses terpasang atau mulai ulang DDuck. Buka /dduck atau /dd untuk menggunakan modul.</value>
+  </data>
+  <data name="Blue" xml:space="preserve">
+    <value>Biru</value>
+  </data>
+  <data name="By McVaxius  |  Version {0}" xml:space="preserve">
+    <value>Oleh mcvaxius  |  Versi {0}</value>
+  </data>
+  <data name="Check installed access" xml:space="preserve">
+    <value>Periksa akses terpasang</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Warna</value>
+  </data>
+  <data name="COMMUNITY AND SUPPORT" xml:space="preserve">
+    <value>KOMUNITAS DAN DUKUNGAN</value>
+  </data>
+  <data name="Compact mode" xml:space="preserve">
+    <value>Mode ringkas</value>
+  </data>
+  <data name="Custom RGB" xml:space="preserve">
+    <value>RGB kustom</value>
+  </data>
+  <data name="D E E P  D U C K I N G" xml:space="preserve">
+    <value>D E E P  D U C K I N G</value>
+  </data>
+  <data name="Deep Ducking provides Deep Dungeon automation through a separately supplied module. This public plugin provides the introduction and loads authenticated DDuck modules." xml:space="preserve">
+    <value>Deep Ducking menyediakan otomatisasi Deep Dungeon melalui modul yang disediakan secara terpisah. Plugin publik ini menyediakan pengenalan dan memuat modul DDuck yang terautentikasi.</value>
+  </data>
+  <data name="Deep Ducking v{0}" xml:space="preserve">
+    <value>Deep Ducking v{0}</value>
+  </data>
+  <data name="Deep Dungeon automation" xml:space="preserve">
+    <value>Otomatisasi Deep Dungeon</value>
+  </data>
+  <data name="Deep Dungeon automation for FINAL FANTASY XIV through a separately supplied module." xml:space="preserve">
+    <value>Otomatisasi Deep Dungeon untuk FINAL FANTASY XIV melalui modul yang disediakan secara terpisah.</value>
+  </data>
+  <data name="Entering" xml:space="preserve">
+    <value>Memasuki</value>
+  </data>
+  <data name="Follower" xml:space="preserve">
+    <value>Pengikut</value>
+  </data>
+  <data name="Get help, share feedback, or support the project." xml:space="preserve">
+    <value>Dapatkan bantuan, bagikan masukan, atau dukung proyek.</value>
+  </data>
+  <data name="Held" xml:space="preserve">
+    <value>Ditahan</value>
+  </data>
+  <data name="Idle" xml:space="preserve">
+    <value>Siaga</value>
+  </data>
+  <data name="InDuty" xml:space="preserve">
+    <value>Dalam tugas</value>
+  </data>
+  <data name="Install your access download, then check installed access." xml:space="preserve">
+    <value>Pasang unduhan akses Anda, lalu periksa akses terpasang.</value>
+  </data>
+  <data name="INSTALL YOUR ACCESS UPDATE" xml:space="preserve">
+    <value>PASANG PEMBARUAN AKSES</value>
+  </data>
+  <data name="Join the community" xml:space="preserve">
+    <value>Gabung komunitas</value>
+  </data>
+  <data name="Keep this public plugin installed and enabled. Follow the installation instructions supplied with your DDuck access package. The package manager must support DDuck access updates." xml:space="preserve">
+    <value>Biarkan plugin publik ini terpasang dan aktif. Ikuti petunjuk pemasangan yang disertakan dengan paket akses DDuck Anda. Pengelola paket harus mendukung pembaruan akses DDuck.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Bahasa</value>
+  </data>
+  <data name="Leader" xml:space="preserve">
+    <value>Pemimpin</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Keluar</value>
+  </data>
+  <data name="Loading UI fonts..." xml:space="preserve">
+    <value>Memuat font antarmuka...</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Tidak ada</value>
+  </data>
+  <data name="NotReady" xml:space="preserve">
+    <value>Belum siap</value>
+  </data>
+  <data name="off" xml:space="preserve">
+    <value>nonaktif</value>
+  </data>
+  <data name="on" xml:space="preserve">
+    <value>aktif</value>
+  </data>
+  <data name="Open Discord" xml:space="preserve">
+    <value>Buka Discord</value>
+  </data>
+  <data name="Pink" xml:space="preserve">
+    <value>Merah muda</value>
+  </data>
+  <data name="Preparing" xml:space="preserve">
+    <value>Menyiapkan</value>
+  </data>
+  <data name="Public access host" xml:space="preserve">
+    <value>Plugin akses publik</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>Siap</value>
+  </data>
+  <data name="ReadyToStart" xml:space="preserve">
+    <value>Siap memulai</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>Memulihkan</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Ditolak</value>
+  </data>
+  <data name="Solo" xml:space="preserve">
+    <value>Sendiri</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>Dihentikan</value>
+  </data>
+  <data name="Support on Ko-fi" xml:space="preserve">
+    <value>Dukung di Ko-fi</value>
+  </data>
+  <data name="Teal" xml:space="preserve">
+    <value>Toska</value>
+  </data>
+  <data name="UI fonts failed to load. See the plugin log." xml:space="preserve">
+    <value>Font antarmuka gagal dimuat. Lihat log plugin.</value>
+  </data>
+  <data name="Unclaimed" xml:space="preserve">
+    <value>Belum diklaim</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>Tidak diketahui</value>
+  </data>
+  <data name="Visit The Dumpster Fire community on Discord for plugin discussion and to arrange access with McVaxius. Support on Ko-fi is welcome; module access is granted privately." xml:space="preserve">
+    <value>Kunjungi komunitas The Dumpster Fire di Discord untuk diskusi plugin dan mengatur akses dengan mcvaxius. Dukungan di Ko-fi diterima dengan senang hati; akses modul diberikan secara pribadi.</value>
+  </data>
+  <data name="Window appearance" xml:space="preserve"><value>Tampilan jendela</value></data>
+  <data name="Compact visible on main window" xml:space="preserve"><value>Tampilkan mode ringkas di jendela utama</value></data>
+  <data name="Language visible on main window" xml:space="preserve"><value>Tampilkan pilihan bahasa di jendela utama</value></data>
+  <data name="Transparency" xml:space="preserve"><value>Transparansi</value></data>
+  <data name="Opacity (%)" xml:space="preserve"><value>Opasitas (%)</value></data>
+  <data name="Auto-fade when unfocused" xml:space="preserve"><value>Redupkan otomatis saat tidak fokus</value></data>
+  <data name="Unfocused opacity (%)" xml:space="preserve"><value>Opasitas saat tidak fokus (%)</value></data>
+  <data name="Unfocused delay (seconds)" xml:space="preserve"><value>Jeda saat tidak fokus (detik)</value></data>
+</root>

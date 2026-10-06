@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="About" xml:space="preserve">
+    <value>Informazioni</value>
+  </data>
+  <data name="About and access installation" xml:space="preserve">
+    <value>Informazioni e installazione dell’accesso</value>
+  </data>
+  <data name="Access" xml:space="preserve">
+    <value>Accesso</value>
+  </data>
+  <data name="Access could not initialize. Check /xllog for [Access] details." xml:space="preserve">
+    <value>Impossibile inizializzare l’accesso. Consulta i dettagli [Access] in /xllog.</value>
+  </data>
+  <data name="After installing an update, click Check installed access or restart DDuck. Open /dduck or /dd to use the module." xml:space="preserve">
+    <value>Dopo un aggiornamento, fai clic su «Verifica accesso installato» o riavvia DDuck. Usa /dduck o /dd per aprire il modulo.</value>
+  </data>
+  <data name="Blue" xml:space="preserve">
+    <value>Blu</value>
+  </data>
+  <data name="By McVaxius  |  Version {0}" xml:space="preserve">
+    <value>Di McVaxius  |  Versione {0}</value>
+  </data>
+  <data name="Check installed access" xml:space="preserve">
+    <value>Verifica accesso installato</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Colore</value>
+  </data>
+  <data name="COMMUNITY AND SUPPORT" xml:space="preserve">
+    <value>COMMUNITY E SUPPORTO</value>
+  </data>
+  <data name="Compact mode" xml:space="preserve">
+    <value>Modalità compatta</value>
+  </data>
+  <data name="Custom RGB" xml:space="preserve">
+    <value>RGB personalizzato</value>
+  </data>
+  <data name="D E E P  D U C K I N G" xml:space="preserve">
+    <value>D E E P  D U C K I N G</value>
+  </data>
+  <data name="Deep Ducking provides Deep Dungeon automation through a separately supplied module. This public plugin provides the introduction and loads authenticated DDuck modules." xml:space="preserve">
+    <value>Deep Ducking automatizza i dungeon profondi tramite un modulo fornito separatamente. Questo plugin pubblico presenta il progetto e carica moduli DDuck autenticati.</value>
+  </data>
+  <data name="Deep Ducking v{0}" xml:space="preserve">
+    <value>Deep Ducking v{0}</value>
+  </data>
+  <data name="Deep Dungeon automation" xml:space="preserve">
+    <value>Automazione dei dungeon profondi</value>
+  </data>
+  <data name="Deep Dungeon automation for FINAL FANTASY XIV through a separately supplied module." xml:space="preserve">
+    <value>Automazione dei dungeon profondi di FINAL FANTASY XIV tramite un modulo fornito separatamente.</value>
+  </data>
+  <data name="Entering" xml:space="preserve">
+    <value>Ingresso</value>
+  </data>
+  <data name="Follower" xml:space="preserve">
+    <value>Seguace</value>
+  </data>
+  <data name="Get help, share feedback, or support the project." xml:space="preserve">
+    <value>Ricevi aiuto, invia commenti o sostieni il progetto.</value>
+  </data>
+  <data name="Held" xml:space="preserve">
+    <value>In pausa</value>
+  </data>
+  <data name="Idle" xml:space="preserve">
+    <value>Inattivo</value>
+  </data>
+  <data name="InDuty" xml:space="preserve">
+    <value>In missione</value>
+  </data>
+  <data name="Install your access download, then check installed access." xml:space="preserve">
+    <value>Installa il pacchetto di accesso, poi verifica l’accesso installato.</value>
+  </data>
+  <data name="INSTALL YOUR ACCESS UPDATE" xml:space="preserve">
+    <value>INSTALLA L’AGGIORNAMENTO DELL’ACCESSO</value>
+  </data>
+  <data name="Join the community" xml:space="preserve">
+    <value>Unisciti alla community</value>
+  </data>
+  <data name="Keep this public plugin installed and enabled. Follow the installation instructions supplied with your DDuck access package. The package manager must support DDuck access updates." xml:space="preserve">
+    <value>Mantieni questo plugin pubblico installato e attivo. Segui le istruzioni fornite con il pacchetto di accesso DDuck. Il gestore di pacchetti deve supportare gli aggiornamenti dell’accesso DDuck.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Lingua</value>
+  </data>
+  <data name="Leader" xml:space="preserve">
+    <value>Leader</value>
+  </data>
+  <data name="Leaving" xml:space="preserve">
+    <value>Uscita</value>
+  </data>
+  <data name="Loading UI fonts..." xml:space="preserve">
+    <value>Caricamento dei caratteri dell’interfaccia…</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Nessuno</value>
+  </data>
+  <data name="NotReady" xml:space="preserve">
+    <value>Non pronto</value>
+  </data>
+  <data name="off" xml:space="preserve">
+    <value>disattivato</value>
+  </data>
+  <data name="on" xml:space="preserve">
+    <value>attivato</value>
+  </data>
+  <data name="Open Discord" xml:space="preserve">
+    <value>Apri Discord</value>
+  </data>
+  <data name="Pink" xml:space="preserve">
+    <value>Rosa</value>
+  </data>
+  <data name="Preparing" xml:space="preserve">
+    <value>Preparazione</value>
+  </data>
+  <data name="Public access host" xml:space="preserve">
+    <value>Host pubblico di accesso</value>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>Pronto</value>
+  </data>
+  <data name="ReadyToStart" xml:space="preserve">
+    <value>Pronto ad avviare</value>
+  </data>
+  <data name="Recovering" xml:space="preserve">
+    <value>Recupero</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Rifiutato</value>
+  </data>
+  <data name="Solo" xml:space="preserve">
+    <value>Solo</value>
+  </data>
+  <data name="Stopped" xml:space="preserve">
+    <value>Fermato</value>
+  </data>
+  <data name="Support on Ko-fi" xml:space="preserve">
+    <value>Sostieni su Ko-fi</value>
+  </data>
+  <data name="Teal" xml:space="preserve">
+    <value>Verde petrolio</value>
+  </data>
+  <data name="UI fonts failed to load. See the plugin log." xml:space="preserve">
+    <value>Caricamento dei caratteri dell’interfaccia non riuscito. Consulta il registro del plugin.</value>
+  </data>
+  <data name="Unclaimed" xml:space="preserve">
+    <value>Non assegnato</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>Sconosciuto</value>
+  </data>
+  <data name="Visit The Dumpster Fire community on Discord for plugin discussion and to arrange access with McVaxius. Support on Ko-fi is welcome; module access is granted privately." xml:space="preserve">
+    <value>Visita The Dumpster Fire su Discord per discutere del plugin e concordare l’accesso con McVaxius. Il supporto su Ko-fi è apprezzato; l’accesso al modulo viene concesso privatamente.</value>
+  </data>
+  <data name="Window appearance" xml:space="preserve"><value>Aspetto della finestra</value></data>
+  <data name="Compact visible on main window" xml:space="preserve"><value>Mostra la modalità compatta nella finestra principale</value></data>
+  <data name="Language visible on main window" xml:space="preserve"><value>Mostra la lingua nella finestra principale</value></data>
+  <data name="Transparency" xml:space="preserve"><value>Trasparenza</value></data>
+  <data name="Opacity (%)" xml:space="preserve"><value>Opacità (%)</value></data>
+  <data name="Auto-fade when unfocused" xml:space="preserve"><value>Sfuma automaticamente senza focus</value></data>
+  <data name="Unfocused opacity (%)" xml:space="preserve"><value>Opacità senza focus (%)</value></data>
+  <data name="Unfocused delay (seconds)" xml:space="preserve"><value>Ritardo senza focus (secondi)</value></data>
+</root>
