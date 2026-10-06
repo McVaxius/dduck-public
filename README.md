@@ -19,7 +19,7 @@ The public package is `DDuck\latest.zip` beneath the selected output directory (
 
 GitHub Actions uses `.github/workflows/build-release.yml` to build and release on pushes to `master`, `v*` tags, or a manual workflow run. It checks out the public host and AethertekUI in sibling directories using the consumer's read-only `AETHERTEKUI_DEPLOY_KEY`, installs .NET 10.0.201, downloads Dalamud references and passes that distribution to restore/build. It attaches `latest.zip` and `DDuck.json` to the versioned release, following the MOM/DhogNav public workflow.
 
-The dependency checkout is pinned to published AethertekUI revision `d00edf3b80fe16357515a9882de3ee4c6f4a2f2b`, which contains the required window opacity and community icon APIs. When adopting a newer library API, update this existing ref after that library revision is published.
+The dependency checkout is pinned to published AethertekUI revision `6c193cf06ac67f954c549cafc2033ac0efdd630a`, which contains the required Hindi text host, window opacity and community icon APIs. When adopting a newer library API, update this existing ref after that library revision is published.
 
 Version bumper H (`Z:\dhogbump\bump_gui_h.py`) includes a separate `DDuck-public` row. It updates the public project, BuildInfo, manifest and repository feed together while preserving CLR ABI `1.0.0.0` and DDuck's private version.
 
