@@ -23,6 +23,7 @@
   <ItemGroup>
     <Compile Include="Plugin.cs" />
     <Compile Include="IntroductionWindow.cs;IModule.cs;ModuleLoader.cs;ModulePackage.cs;BuildInfo.cs;TrustAnchor.cs;PrivateManifest.cs" />
+    <Compile Include="RuntimeDependencyPolicy.cs" Link="RuntimeDependencyPolicy.cs" />
     <Compile Include="AppearancePreferences.cs;Ui/**/*.cs" />
     <EmbeddedResource Include="Localization/Strings_*.resx" LogicalName="DDuck.PublicShell.Localization.%(Filename).resources" WithCulture="false" />
     <ProjectReference Include="../aethertekUI/src/AethertekUI/AethertekUI.csproj" />
