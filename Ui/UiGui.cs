@@ -5,6 +5,7 @@ using System.IO;
 using System.Numerics;
 using AethertekUI;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Windowing;
 
 namespace DDuck.PublicShell.Ui;
 
@@ -249,6 +250,32 @@ internal static class UiGui
         return changed;
     }
     internal static void Title(string original,string translated)
+        => TitleWithButtons(original, translated, null);
+
+    internal static void ReserveTitleSpace(Window owner, string visible, float minimumWidth)
+    {
+        var style = ImGui.GetStyle();
+        var fontSize = ImGui.GetFontSize();
+        var collapse = (owner.Flags & (ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.Modal)) == 0
+            && style.WindowMenuButtonPosition != ImGuiDir.None;
+        var controls = AdditionalTitleButtonWidth(owner, fontSize)
+            + ((owner.ShowCloseButton ? 1 : 0) + (collapse ? 1 : 0)) * (fontSize + style.ItemInnerSpacing.X);
+        var required = (MaterialText.Measure(visible).X + controls + style.FramePadding.X * 2 + style.ItemInnerSpacing.X)
+            / ImGui.GetIO().FontGlobalScale;
+        var bounds = owner.SizeConstraints ?? new WindowSizeConstraints();
+        bounds.MinimumSize = new(Math.Max(minimumWidth, required), bounds.MinimumSize.Y);
+        owner.SizeConstraints = bounds;
+    }
+
+    private static float AdditionalTitleButtonWidth(Window? owner, float fontSize)
+    {
+        if (owner is null) return 0;
+        var count = owner.TitleBarButtons.Count(button => !owner.IsClickthrough || button.AvailableClickthrough);
+        if (owner.AllowPinning || owner.AllowClickthrough || owner.AllowBackgroundBlur) count++;
+        return count * (fontSize + ImGui.GetStyle().ItemInnerSpacing.X);
+    }
+
+    internal static void TitleWithButtons(string original,string translated, Window? owner)
     {
         var s=ImGui.GetStyle(); var size=ImGui.GetFontSize();var height=ImGui.GetFrameHeight();
         var flags=ImGuiP.GetCurrentWindow().Flags;
@@ -258,7 +285,11 @@ internal static class UiGui
         using var font=UiText.Font(UiFontRole.Body);
         var translatedWidth=MaterialText.Measure(translated).X*size/ImGui.GetFontSize();
         var dl=ImGui.GetWindowDrawList();
-        dl.PushClipRect(ImGui.GetWindowPos(),ImGui.GetWindowPos()+new Vector2(Math.Max(1, ImGui.GetWindowSize().X - height * 1.5f),height),false);
+        var reserved = owner is null ? height * 1.5f : s.FramePadding.X * 2
+            + (owner.ShowCloseButton ? size : 0) + AdditionalTitleButtonWidth(owner, size);
+        if (owner is not null && (flags & ImGuiWindowFlags.NoCollapse) == 0 && s.WindowMenuButtonPosition == ImGuiDir.Right)
+            reserved += size + s.ItemInnerSpacing.X;
+        dl.PushClipRect(position,ImGui.GetWindowPos()+new Vector2(Math.Max(0, ImGui.GetWindowSize().X - reserved),height),false);
         var bg=s.Colors[(int)(ImGui.IsWindowFocused(ImGuiFocusedFlags.RootAndChildWindows)?ImGuiCol.TitleBgActive:ImGuiCol.TitleBg)];
         dl.AddRectFilled(position,position+new Vector2(Math.Max(originalWidth,translatedWidth),height-s.FramePadding.Y),ImGui.ColorConvertFloat4ToU32(bg));
         MaterialText.AddText(dl, ImGui.GetFont(),size,position,ImGui.ColorConvertFloat4ToU32(s.Colors[(int)ImGuiCol.Text]),translated);

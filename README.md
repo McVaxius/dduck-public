@@ -41,6 +41,6 @@ The implementation migration is described in [DDUCK-IMPLEMENTATION-HANDOFF.md](D
 
 ## Community and license
 
-Join [The Dumpster Fire on Discord](https://discord.gg/VsXqydsvpu) or [support McVaxius on Ko-fi](https://ko-fi.com/mcvaxius).
+Join [The Dumpster Fire on Discord](https://discord.gg/ac6gjDvR8R) or [support McVaxius on Ko-fi](https://ko-fi.com/mcvaxius).
 
 DDuck's existing AGPL-3.0-or-later license and third-party notices are retained. See [LICENSE](LICENSE) and [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt).

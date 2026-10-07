@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
@@ -18,7 +19,7 @@ internal sealed class IntroductionWindow : Window
 {
     private readonly MaterialWindowMotion motion = new();
     private readonly AethertekUI.MaterialWindowOpacity windowOpacity = new();
-    private const string DiscordUrl = "https://discord.gg/VsXqydsvpu";
+    private const string DiscordUrl = "https://discord.gg/ac6gjDvR8R";
     private const string SupportUrl = "https://ko-fi.com/mcvaxius";
     private static Vector4 Accent => MaterialTheme.Current.Colors.Primary;
     private readonly PublicAppearance appearance;
@@ -40,9 +41,27 @@ internal sealed class IntroductionWindow : Window
         Flags |= ImGuiWindowFlags.HorizontalScrollbar;
         SizeConstraints = new WindowSizeConstraints { MinimumSize = new Vector2(360, 380), MaximumSize = new Vector2(float.MaxValue) };
         icon = textures.GetFromFile(Path.Combine(pluginInterface.AssemblyLocation.DirectoryName!, "icon.png"));
+        TitleBarButtons.Add(new()
+        {
+            Icon = FontAwesomeIcon.Cog, Priority = 0, IconOffset = new(2, 1),
+            Click = button => { if (button == ImGuiMouseButton.Left) OpenSettings(); },
+            ShowTooltip = () => MaterialText.SetTooltip(UiText.T("Window appearance")),
+        });
+        TitleBarButtons.Add(new()
+        {
+            Icon = FontAwesomeIcon.Search, Priority = -10, IconOffset = new(2, 1),
+            Click = button => { if (button == ImGuiMouseButton.Left) refresh(); },
+            ShowTooltip = () => MaterialText.SetTooltip(UiText.T("Check installed access")
+                + (loader.Failed ? "\n" + UiText.T("Access could not initialize. Check /xllog for [Access] details.") : "")),
+        });
     }
 
-    public override void PreDraw() => motion.Prepare(this, reducedMotion: false, roundedCorners: true);
+    public override void PreDraw()
+    {
+        if (openAppearanceSection) ImGui.SetNextWindowCollapsed(false, ImGuiCond.Always);
+        UiGui.ReserveTitleSpace(this, UiText.F("Deep Ducking v{0}", BuildInfo.Version), 360);
+        motion.Prepare(this, reducedMotion: false, roundedCorners: true);
+    }
 
     public override void PostDraw()
     {
@@ -55,7 +74,7 @@ internal sealed class IntroductionWindow : Window
         motion.DrawChrome();
         var scale = ImGuiHelpers.GlobalScale;
         var compact = PublicPresentation.Compact;
-        UiGui.Title($"Deep Ducking v{BuildInfo.Version}", UiText.F("Deep Ducking v{0}", BuildInfo.Version));
+        UiGui.TitleWithButtons($"Deep Ducking v{BuildInfo.Version}", UiText.F("Deep Ducking v{0}", BuildInfo.Version), this);
         if (icon.TryGetWrap(out var texture, out _))
         { ImGui.Image(texture.Handle, new Vector2(compact ? 32 : 64) * scale); ImGui.SameLine(); }
         ImGui.BeginGroup();
