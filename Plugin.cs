@@ -16,9 +16,12 @@ public sealed class Plugin : IDalamudPlugin
     private readonly IDalamudPluginInterface pluginInterface;
     private readonly ICommandManager commands;
     private readonly WindowSystem windows = new("DDuck.Information");
+    private const string ReleaseRequiredMessage = "You are not on Dalamud Release";
     private readonly ModuleLoader loader = new();
-    private readonly IntroductionWindow introduction;
-    private readonly Ui.PublicAppearance appearance;
+    private readonly ReleaseDecision release;
+    private readonly Window publicWindow;
+    private readonly IntroductionWindow? introduction;
+    private readonly Ui.PublicAppearance? appearance;
     private readonly List<Action> cleanup = [];
     private int disposed;
     private bool IsDisposed => Volatile.Read(ref disposed) != 0;
@@ -28,15 +31,21 @@ public sealed class Plugin : IDalamudPlugin
         this.pluginInterface = pluginInterface;
         this.commands = commands;
         Log = log;
+        release = ReleaseDecision.Capture(pluginInterface);
         try
         {
-            var preferences = new Ui.PreferencePersistence(pluginInterface);
-            AppearancePreferences.Initialize(preferences.Load, preferences.Save);
-            appearance = new Ui.PublicAppearance(pluginInterface, textures);
-            cleanup.Add(appearance.Dispose);
-            introduction = new IntroductionWindow(pluginInterface, textures, loader, RefreshAccess, appearance);
+            if (release.Allowed)
+            {
+                var preferences = new Ui.PreferencePersistence(pluginInterface);
+                AppearancePreferences.Initialize(preferences.Load, preferences.Save);
+                appearance = new Ui.PublicAppearance(pluginInterface, textures);
+                cleanup.Add(appearance.Dispose);
+                introduction = new IntroductionWindow(pluginInterface, textures, loader, RefreshAccess, appearance);
+                publicWindow = introduction;
+            }
+            else publicWindow = new ReleaseRequiredWindow();
             cleanup.Add(windows.RemoveAllWindows);
-            windows.AddWindow(introduction);
+            windows.AddWindow(publicWindow);
             foreach (var command in new[] { "/dduck", "/dd" })
             {
                 if (!commands.AddHandler(command, new CommandInfo(OnCommand) { HelpMessage = "Open Deep Ducking. /dd help opens the command guide (full module required). /dduck is an alias." }))
@@ -57,7 +66,13 @@ public sealed class Plugin : IDalamudPlugin
             validate.RegisterFunc(ValidateAccess);
             var refresh = pluginInterface.GetIpcProvider<bool>("DDuck.Access.Refresh.v1");
             cleanup.Add(refresh.UnregisterFunc);
-            refresh.RegisterFunc(() => { RefreshAccess(); return loader.Module != null && !loader.Failed; });
+            refresh.RegisterFunc(() => { RefreshAccess(); return release.Allowed && loader.Module != null && !loader.Failed; });
+            if (!release.Allowed)
+            {
+                ReportReleaseDenial();
+                publicWindow.IsOpen = true;
+                return;
+            }
             loader.Load(pluginInterface);
         }
         catch
@@ -67,8 +82,10 @@ public sealed class Plugin : IDalamudPlugin
         }
     }
 
-    private static bool ValidateAccess(byte[] bytes)
+    private bool ValidateAccess(byte[] bytes)
     {
+        // Keep branch rejection outside the package-error catch so APM receives the explicit reason.
+        if (!release.Allowed) throw new InvalidOperationException(ReleaseRequiredMessage);
         try
         {
             var plaintext = ModulePackage.VerifyAndDecrypt(bytes, TrustAnchor.PublicKey, Version.Parse(BuildInfo.Version));
@@ -81,32 +98,40 @@ public sealed class Plugin : IDalamudPlugin
     private void RefreshAccess()
     {
         if (IsDisposed) return;
+        if (!release.Allowed) { publicWindow.IsOpen = true; return; }
         loader.Load(pluginInterface);
-        if (loader.Module is { } module) { introduction.IsOpen = false; module.OpenMainWindow(); }
+        if (release.Allowed && loader.Module is { } module) { publicWindow.IsOpen = false; module.OpenMainWindow(); }
     }
 
     private void Open()
     {
         if (IsDisposed) return;
-        if (loader.Module is { } module) module.OpenMainWindow();
-        else introduction.IsOpen = true;
+        if (release.Allowed && loader.Module is { } module) module.OpenMainWindow();
+        else publicWindow.IsOpen = true;
     }
 
     private void OnCommand(string command, string arguments)
     {
         if (IsDisposed) return;
-        if (loader.Module is { } module) module.OnCommand(command, arguments);
-        else introduction.IsOpen = true;
+        if (release.Allowed && loader.Module is { } module) module.OnCommand(command, arguments);
+        else publicWindow.IsOpen = true;
     }
 
     private void OpenConfig()
     {
         if (IsDisposed) return;
-        if (loader.Module is { } module) module.OnCommand("/dduck", "config");
-        else introduction.OpenSettings();
+        if (release.Allowed && loader.Module is { } module) module.OnCommand("/dduck", "config");
+        else if (release.Allowed) introduction!.OpenSettings();
+        else publicWindow.IsOpen = true;
     }
 
-    private void Draw() { if (IsDisposed) return; appearance.Draw(windows); loader.Module?.Draw(); }
+    private void Draw()
+    {
+        if (IsDisposed) return;
+        if (!release.Allowed) { windows.Draw(); return; }
+        appearance!.Draw(windows);
+        loader.Module?.Draw();
+    }
 
     public void Dispose()
     {
@@ -114,6 +139,44 @@ public sealed class Plugin : IDalamudPlugin
         for (var index = cleanup.Count - 1; index >= 0; --index) Cleanup(cleanup[index]);
         cleanup.Clear();
         Cleanup(loader.Dispose);
+    }
+
+    private void ReportReleaseDenial()
+    {
+        try { Log?.Error("[Access] {Reason}. Track: {Track}. {Detail}", ReleaseRequiredMessage, release.Track, release.Detail); }
+        catch { /* A logging failure must not prevent the error shell from opening. */ }
+    }
+
+    private sealed record ReleaseDecision(bool Allowed, string Track, string Detail)
+    {
+        internal static ReleaseDecision Capture(IDalamudPluginInterface pluginInterface)
+        {
+            try
+            {
+                var info = pluginInterface.GetDalamudVersion();
+                var track = info.BetaTrack?.Trim();
+                var allowed = string.Equals(track, "release", StringComparison.OrdinalIgnoreCase);
+                var detail = $"Dalamud version: {info.Version}; ClientStructs Git hash: {info.GitHashClientStructs ?? "<unknown>"}.";
+                if (string.IsNullOrWhiteSpace(track))
+                    detail = "The runtime branch was not reported; release could not be confirmed. " + detail;
+                return new ReleaseDecision(allowed, string.IsNullOrWhiteSpace(track) ? "<unknown>" : track, detail);
+            }
+            catch (Exception error)
+            {
+                return new ReleaseDecision(false, "<unknown>", $"Branch check failed: {error.GetType().Name}: {error.Message}");
+            }
+        }
+    }
+
+    private sealed class ReleaseRequiredWindow : Window
+    {
+        public ReleaseRequiredWindow() : base("Deep Ducking##DalamudReleaseRequired")
+        {
+            Size = new System.Numerics.Vector2(420, 100);
+            SizeCondition = Dalamud.Bindings.ImGui.ImGuiCond.Appearing;
+        }
+
+        public override void Draw() => Dalamud.Bindings.ImGui.ImGui.TextUnformatted(ReleaseRequiredMessage);
     }
 
     private static void Cleanup(Action action)
