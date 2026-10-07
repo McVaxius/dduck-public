@@ -169,12 +169,17 @@ internal static class UiGui
     internal static bool Button(string label,string? display=null)
     {
         var translated=display ?? UiText.T(label.Split("##",2)[0]);
+        var toolbar = MaterialControls.Context != MaterialControlContext.Dense && ImGui.GetStyle().FramePadding.Y > 0;
         using var height = MaterialText.PushLineHeight(translated);
+        using var controls = toolbar ? MaterialControls.Push(MaterialControlContext.Toolbar) : default;
+        var buttonHeight = toolbar
+            ? MaterialControlMetrics.Measure(MaterialTheme.Metrics, Math.Max(ImGui.GetTextLineHeight(), MaterialText.Measure(translated).Y), MaterialControlContext.Toolbar).Height
+            : ImGui.GetFrameHeight();
         var width=MaterialText.Measure(translated).X+2*ImGui.GetStyle().FramePadding.X;
         width = MaterialLayout.FitNextItemWidth(width, MathF.Ceiling(width));
         var foreground=ImGui.GetStyle().Colors[(int)ImGuiCol.Text];
         ImGui.PushStyleColor(ImGuiCol.Text,Vector4.Zero);
-        var clicked=ImGui.Button(label,new Vector2(width,ImGui.GetFrameHeight()));
+        var clicked=ImGui.Button(label,new Vector2(width,buttonHeight));
         ImGui.PopStyleColor();
         var min=ImGui.GetItemRectMin(); var max=ImGui.GetItemRectMax();
         foreground.W*=ImGui.GetStyle().Alpha;
@@ -186,11 +191,16 @@ internal static class UiGui
     internal static bool Button(string label, Vector2 pixels, string? display = null)
     {
         var translated = display ?? UiText.T(label.Split("##", 2)[0]);
+        var toolbar = pixels.Y <= 0 && MaterialControls.Context != MaterialControlContext.Dense && ImGui.GetStyle().FramePadding.Y > 0;
         using var height = MaterialText.PushLineHeight(translated);
+        using var controls = toolbar ? MaterialControls.Push(MaterialControlContext.Toolbar) : default;
+        var buttonHeight = toolbar
+            ? MaterialControlMetrics.Measure(MaterialTheme.Metrics, Math.Max(ImGui.GetTextLineHeight(), MaterialText.Measure(translated).Y), MaterialControlContext.Toolbar).Height
+            : ImGui.GetFrameHeight();
         pixels.X = MaterialLayout.FitNextItemWidth(pixels.X, MathF.Ceiling(MaterialText.Measure(translated).X + ImGui.GetStyle().FramePadding.X * 2));
         var color = ImGui.GetStyle().Colors[(int)ImGuiCol.Text];
         ImGui.PushStyleColor(ImGuiCol.Text, Vector4.Zero);
-        var clicked = ImGui.Button(label, new Vector2(pixels.X, Math.Max(pixels.Y, ImGui.GetFrameHeight())));
+        var clicked = ImGui.Button(label, new Vector2(pixels.X, Math.Max(pixels.Y, buttonHeight)));
         ImGui.PopStyleColor();
         color.W *= ImGui.GetStyle().Alpha;
         var min = ImGui.GetItemRectMin(); var max = ImGui.GetItemRectMax();

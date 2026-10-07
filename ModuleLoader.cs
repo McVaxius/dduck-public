@@ -140,6 +140,24 @@ internal sealed class ModuleLoader : IDisposable
             var uiAdapter = typeof(AethertekUI.Dalamud.MaterialWindowMotion).Assembly;
             if (name.Name == uiAdapter.GetName().Name)
                 return name.FullName == uiAdapter.GetName().FullName ? uiAdapter : throw new FileLoadException("Access UI adapter identity mismatch.");
+            if (name.Name == "FFXIVClientStructs")
+            {
+                // ClientStructs is supplied by the running Dalamud host, not pinned by this module.
+                var hostAssembly = typeof(IDalamudPluginInterface).Assembly;
+                var hostContext = AssemblyLoadContext.GetLoadContext(hostAssembly)
+                    ?? throw new FileLoadException("Dalamud host load context is unavailable.");
+                var hostRequest = (AssemblyName)name.Clone();
+                hostRequest.Version = null;
+                var dependency = hostContext.LoadFromAssemblyName(hostRequest);
+                var identity = dependency.GetName();
+                hostRequest.Version = identity.Version;
+                if (hostRequest.FullName != identity.FullName ||
+                    name.Version != null && (identity.Version == null || identity.Version < name.Version) ||
+                    !string.Equals(Path.GetDirectoryName(dependency.Location),
+                        Path.GetDirectoryName(hostAssembly.Location), StringComparison.OrdinalIgnoreCase))
+                    throw new FileLoadException("ClientStructs does not match the running Dalamud host.");
+                return dependency;
+            }
             var runtime = Path.GetDirectoryName(typeof(object).Assembly.Location)!;
             var dalamud = Path.GetDirectoryName(typeof(IDalamudPluginInterface).Assembly.Location)!;
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
