@@ -34,13 +34,14 @@ public sealed class Commands(State state) : ICommandManager
 }
 public sealed class Log(State state) : IPluginLog
 {
+    public void Error(string message, params object[] arguments) { if (state.LogFailure) throw new Exception("logging fault"); }
     public void Warning(Exception error, string message) { state.Warnings++; if (state.LogFailure) throw new Exception("logging fault"); }
 }
 public sealed class Textures : ITextureProvider { }
 public sealed class TestInterface(State state) : IDalamudPluginInterface
 {
     private readonly Dictionary<string, IProvider> providers = [];
-    public Ui UiBuilder { get; } = new(state);
+    public TestUi UiBuilder { get; } = new(state);
     public int ProviderCount => providers.Values.Count(provider => provider.Registered);
     private static string Label(string name) => name.Contains("Directory") ? "directory" : name.Contains("Validate") ? "validate" : "refresh";
     public Provider<T> GetIpcProvider<T>(string name)
@@ -53,6 +54,7 @@ public sealed class TestInterface(State state) : IDalamudPluginInterface
         if (!providers.TryGetValue(name, out var value)) providers[name] = value = new Provider<TArg, T>(state, Label(name));
         return (Provider<TArg, T>)value;
     }
+    public Dalamud.Plugin.VersionInfo.IDalamudVersionInfo GetDalamudVersion() => new Dalamud.Plugin.VersionInfo.ReleaseInfo();
     public string GetPluginConfigDirectory() => "synthetic-config";
 }
 public interface IProvider { bool Registered { get; } }
@@ -70,7 +72,7 @@ public sealed class Provider<TArg, T>(State state, string label) : IProvider
     public void RegisterFunc(Func<TArg, T> value) { Callback = value; Registered = true; state.Register(label); }
     public void UnregisterFunc() { Callback = null; Registered = false; state.Remove(label); }
 }
-public sealed class Ui(State state)
+public sealed class TestUi(State state)
 {
     private Action? draw, main, config;
     public int Count => (draw?.GetInvocationList().Length ?? 0) + (main?.GetInvocationList().Length ?? 0) + (config?.GetInvocationList().Length ?? 0);
@@ -93,7 +95,7 @@ namespace Dalamud.IoC { [AttributeUsage(AttributeTargets.Property)] public seale
 namespace Dalamud.Plugin.Services
 {
     public interface ICommandManager { bool AddHandler(string name, CommandInfo info); void RemoveHandler(string name); }
-    public interface IPluginLog { void Warning(Exception error, string message); }
+    public interface IPluginLog { void Error(string message, params object[] arguments); void Warning(Exception error, string message); }
     public interface ITextureProvider { }
 }
 namespace Dalamud.Plugin
@@ -101,14 +103,38 @@ namespace Dalamud.Plugin
     public interface IDalamudPlugin : IDisposable { }
     public interface IDalamudPluginInterface
     {
-        Ui UiBuilder { get; }
+        TestUi UiBuilder { get; }
         Provider<T> GetIpcProvider<T>(string name);
         Provider<TArg,T> GetIpcProvider<TArg,T>(string name);
+        Dalamud.Plugin.VersionInfo.IDalamudVersionInfo GetDalamudVersion();
         string GetPluginConfigDirectory();
     }
 }
+namespace Dalamud.Plugin.VersionInfo
+{
+    public interface IDalamudVersionInfo { Version Version { get; } string? BetaTrack { get; } string? GitHashClientStructs { get; } }
+    public sealed class ReleaseInfo : IDalamudVersionInfo
+    {
+        public Version Version => new(15, 0, 3, 6);
+        public string? BetaTrack => "release";
+        public string? GitHashClientStructs => "synthetic";
+    }
+}
+namespace Dalamud.Bindings.ImGui
+{
+    public enum ImGuiCond { Appearing }
+    public static class ImGui { public static void TextUnformatted(string text) { } }
+}
 namespace Dalamud.Interface.Windowing
 {
+    public abstract class Window(string name)
+    {
+        public string WindowName { get; } = name;
+        public bool IsOpen { get => State.Current.IntroductionOpen; set => State.Current.IntroductionOpen = value; }
+        public System.Numerics.Vector2? Size { get; set; }
+        public Dalamud.Bindings.ImGui.ImGuiCond SizeCondition { get; set; }
+        public abstract void Draw();
+    }
     public sealed class WindowSystem
     {
         public WindowSystem(string name) { }
@@ -120,11 +146,13 @@ namespace Dalamud.Interface.Windowing
 }
 namespace DDuck.PublicShell
 {
-    internal sealed class IntroductionWindow
+    internal sealed class IntroductionWindow : Dalamud.Interface.Windowing.Window
     {
-        public IntroductionWindow(IDalamudPluginInterface pi, ITextureProvider textures, ModuleLoader loader, Action refresh) { }
-        public bool IsOpen { get => State.Current.IntroductionOpen; set => State.Current.IntroductionOpen = value; }
+        public IntroductionWindow(IDalamudPluginInterface pi, ITextureProvider textures, ModuleLoader loader, Action refresh, Ui.PublicAppearance appearance) : base("Introduction") { }
+        public void OpenSettings() => IsOpen = true;
+        public override void Draw() { }
     }
+    internal static class AppearancePreferences { public static void Initialize(Func<object> load, Action<object> save) { } }
     internal sealed class ModuleLoader : IDisposable
     {
         private readonly State state = State.Current;
@@ -138,5 +166,21 @@ namespace DDuck.PublicShell
         public void OpenMainWindow() => state.Opens++;
         public void OnCommand(string command, string arguments) => state.CommandsSeen.Add(command + " " + arguments);
         public void Draw() => state.PrivateDraws++;
+    }
+}
+
+namespace DDuck.PublicShell.Ui
+{
+    internal sealed class PreferencePersistence
+    {
+        public PreferencePersistence(IDalamudPluginInterface pi) { }
+        public object Load() => new();
+        public void Save(object value) { }
+    }
+    internal sealed class PublicAppearance : IDisposable
+    {
+        public PublicAppearance(IDalamudPluginInterface pi, ITextureProvider textures) { }
+        public void Draw(Dalamud.Interface.Windowing.WindowSystem windows) => windows.Draw();
+        public void Dispose() { }
     }
 }
