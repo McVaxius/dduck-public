@@ -66,6 +66,7 @@ internal sealed class IntroductionWindow : Window
     public override void PostDraw()
     {
         motion.Restore(this);
+        UiGui.PaintTitleImage(this, UiText.F("Deep Ducking v{0}", BuildInfo.Version), icon);
         appearance.ApplyWindowOpacity(windowOpacity, WindowName);
     }
 
@@ -74,9 +75,11 @@ internal sealed class IntroductionWindow : Window
         motion.DrawChrome();
         var scale = ImGuiHelpers.GlobalScale;
         var compact = PublicPresentation.Compact;
-        UiGui.TitleWithButtons($"Deep Ducking v{BuildInfo.Version}", UiText.F("Deep Ducking v{0}", BuildInfo.Version), this);
+        var iconMin = ImGui.GetCursorScreenPos();
+        var iconSize = new Vector2(compact ? 32 : 64) * scale;
         if (icon.TryGetWrap(out var texture, out _))
-        { ImGui.Image(texture.Handle, new Vector2(compact ? 32 : 64) * scale); ImGui.SameLine(); }
+            MaterialCanvas.DrawImage(ImGui.GetWindowDrawList(), texture.Handle, new(texture.Width, texture.Height), iconMin, iconMin + iconSize);
+        ImGui.Dummy(iconSize); ImGui.SameLine();
         ImGui.BeginGroup();
         using (UiText.Font(compact ? UiFontRole.CompactTitle : UiFontRole.Title))
             UiGui.TextColored(Accent, "D E E P  D U C K I N G");

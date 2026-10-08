@@ -21,7 +21,9 @@ internal sealed class PublicAppearance : IDisposable
     private UiText text;
     private PublicFonts fonts;
     private MaterialTheme theme;
-    private readonly MaterialOptions<string> languages = new(UiText.Languages.Select(l => new MaterialOption<string>(l.Code, l.Code, l.Name)).ToArray());
+    private bool hindiAvailable;
+    private MaterialOptions<string> Languages => new(UiText.Languages.Select(l => new MaterialOption<string>(l.Code, l.Code,
+        l.Code == "hi" && !hindiAvailable ? "Hindi (unavailable)" : l.Name, l.Code == "hi" && !hindiAvailable)).ToArray());
     private string appliedLanguage = "";
     private uint appliedAccent;
     private Vector3 accentDraft;
@@ -43,6 +45,7 @@ internal sealed class PublicAppearance : IDisposable
             fonts = new(pluginInterface.UiBuilder.FontAtlas, text.GlyphRanges(), language);
             appliedLanguage = language;
             checkedGeneration = -1;
+            hindiAvailable = false;
             fontIssueLogged = false;
         }
         if (theme is null || appliedAccent != (AppearancePreferences.Current.AccentRgb & 0xFFFFFF))
@@ -63,6 +66,8 @@ internal sealed class PublicAppearance : IDisposable
         using var shaping = shapedText.Push();
         if (fonts.Ready && checkedGeneration != fonts.Generation)
         {
+            hindiAvailable = Enum.GetValues<UiFontRole>().All(role => shapedText.Renderer.TryCheckGlyphs(
+                [UiText.Languages.First(l => l.Code == "hi").Name], PublicPresentation.AtlasHeight(role) * ImGuiHelpers.GlobalScale, out _));
             try
             {
                 foreach (var role in Enum.GetValues<UiFontRole>())
@@ -88,7 +93,12 @@ internal sealed class PublicAppearance : IDisposable
                 if (visible)
                 {
                     fontStatusDecorations.Paint();
-                    MaterialText.TextWrapped(UiText.T(fonts.LoadException is null && !fontIssueLogged ? "Loading UI fonts..." : "UI fonts failed to load. See the plugin log."));
+                    var failed = fonts.LoadException is not null || fontIssueLogged;
+                    MaterialText.TextWrapped(appliedLanguage == "hi"
+                        ? failed ? "Hindi is unavailable. Use English to recover; your saved language is unchanged." : "Loading UI fonts..."
+                        : UiText.T(failed ? "UI fonts failed to load. See the plugin log." : "Loading UI fonts..."));
+                    if (appliedLanguage == "hi" && failed && ImGui.Button("Use English"))
+                        AppearancePreferences.Save(AppearancePreferences.Current with { Language = "en" });
                 }
             }
             finally
@@ -118,7 +128,7 @@ internal sealed class PublicAppearance : IDisposable
     {
         var language = appliedLanguage;
         using var controls = MaterialControls.Push(PublicPresentation.Controls());
-        var changed = MaterialAppearanceSelector.Draw(id, ref accentDraft, ref language, languages,
+        var changed = MaterialAppearanceSelector.Draw(id, ref accentDraft, ref language, Languages,
             new(UiText.T("Color"), UiText.T("Language"), UiText.T("Teal"), UiText.T("Blue"), UiText.T("Pink"), UiText.T("Custom RGB")), 140);
         if (!changed.AccentChanged && !changed.LanguageChanged) return;
         var rgb = ((uint)Math.Clamp((int)MathF.Round(accentDraft.X * 255), 0, 255) << 16)
@@ -153,7 +163,7 @@ internal sealed class PublicAppearance : IDisposable
     {
         var language = appliedLanguage;
         using var controls = MaterialControls.Push(PublicPresentation.Controls());
-        if (!MaterialAppearanceSelector.DrawLanguage(id, ref language, languages, 140)) return;
+        if (!MaterialAppearanceSelector.DrawLanguage(id, ref language, Languages, 140)) return;
         AppearancePreferences.Save(AppearancePreferences.Current with { Language = language });
     }
 

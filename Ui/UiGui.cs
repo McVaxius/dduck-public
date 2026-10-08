@@ -6,6 +6,7 @@ using System.Numerics;
 using AethertekUI;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Windowing;
+using Dalamud.Interface.Textures;
 
 namespace DDuck.PublicShell.Ui;
 
@@ -270,7 +271,8 @@ internal static class UiGui
             && style.WindowMenuButtonPosition != ImGuiDir.None;
         var controls = AdditionalTitleButtonWidth(owner, fontSize)
             + ((owner.ShowCloseButton ? 1 : 0) + (collapse ? 1 : 0)) * (fontSize + style.ItemInnerSpacing.X);
-        var required = (MaterialText.Measure(visible).X + controls + style.FramePadding.X * 2 + style.ItemInnerSpacing.X)
+        var required = (MaterialText.Measure(visible).X + controls + style.FramePadding.X * 2 + style.ItemInnerSpacing.X
+            + fontSize + style.ItemInnerSpacing.X)
             / ImGui.GetIO().FontGlobalScale;
         var bounds = owner.SizeConstraints ?? new WindowSizeConstraints();
         bounds.MinimumSize = new(Math.Max(minimumWidth, required), bounds.MinimumSize.Y);
@@ -283,6 +285,18 @@ internal static class UiGui
         var count = owner.TitleBarButtons.Count(button => !owner.IsClickthrough || button.AvailableClickthrough);
         if (owner.AllowPinning || owner.AllowClickthrough || owner.AllowBackgroundBlur) count++;
         return count * (fontSize + ImGui.GetStyle().ItemInnerSpacing.X);
+    }
+
+    internal static void PaintTitleImage(Window owner, string visibleTitle, ISharedImmediateTexture icon)
+    {
+        var native = ImGuiP.FindWindowByName(owner.WindowName);
+        if (native.IsNull) return;
+        ImTextureID image = default;
+        var imageSize = Vector2.One;
+        if (icon.TryGetWrap(out var texture, out _))
+        { image = texture.Handle; imageSize = new(texture.Width, texture.Height); }
+        MaterialWindowHeader.PaintTitle(native, visibleTitle, image, imageSize,
+            AdditionalTitleButtonWidth(owner, ImGuiP.CalcFontSize(native)), owner.ShowCloseButton);
     }
 
     internal static void TitleWithButtons(string original,string translated, Window? owner)

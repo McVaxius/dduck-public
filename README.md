@@ -4,7 +4,13 @@ This repository contains the complete DDuck public host: introduction, authentic
 
 The public version is **0.2.2.0**. Its CLR assembly identity is **1.0.0.0**, the stable module ABI. Private module versions advance independently.
 
-The introduction provides regular and compact layouts, shared colour and fourteen-language selectors, and managed host fonts. The language choices include Vietnamese, Brazilian Portuguese, Indonesian, Polish and Turkish. Its appearance preferences use the existing plugin configuration and are shared with the authenticated module while preserving private and unknown configuration fields. In regular mode, access instructions and the check button sit beside each other when space permits and stack in narrow windows. Community buttons use shared Discord and Ko-fi artwork; access-failure text wraps to the visible window width.
+The introduction provides regular and compact layouts, colour and language selectors, and managed host fonts. The language choices include Vietnamese, Brazilian Portuguese, Indonesian, Polish, Turkish and Hindi. Its appearance preferences use the existing plugin configuration and are shared with the authenticated module while preserving private and unknown configuration fields. Window appearance keeps colour, language and compact controls available when their Main shortcuts are hidden. Transparency defaults to 100% opacity and fades to 50% after ten unfocused seconds; settings retain both opacity values and the delay. The titlebar keeps appearance and installed-access shortcuts. Main branding and the expanded/collapsed title use the packaged icon, with reserved space while its texture loads. In regular mode, access instructions and the check button sit beside each other when space permits and stack in narrow windows. Community buttons use shared Discord and Ko-fi artwork; access-failure text wraps to the visible window width. Image changes still require game/GPU acceptance; the public host starts automation only through its separately authenticated module.
+
+Hindi text uses native Windows font fallback. An unavailable menu caption becomes
+a disabled **Hindi (unavailable)** choice without blocking other languages.
+A saved Hindi selection with failed coverage shows an ASCII status and **Use English**;
+the saved language changes only on that action. The public Release build and
+focused native recovery checks pass; managed-font and Linux/Wine/game acceptance remain pending.
 
 ## Dalamud Release requirement
 

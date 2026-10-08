@@ -35,7 +35,8 @@ internal sealed class UiText : IDisposable
         try
         {
             var fallback = english.GetResourceSet(CultureInfo.InvariantCulture, true, false) ?? throw new MissingManifestResourceException("en");
-            RequiredText = Values(Resources).Concat(Values(fallback)).Concat(Languages.Select(l => l.Name)).Append(NativeSymbols).Distinct().ToArray();
+            RequiredText = Values(Resources).Concat(Values(fallback)).Concat(Languages.Where(l => l.Code != "hi").Select(l => l.Name))
+                .Append(NativeSymbols).Append("Hindi (unavailable)").Distinct().ToArray();
         }
         finally { english.ReleaseAllResources(); }
     }
