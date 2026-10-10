@@ -185,6 +185,9 @@ internal sealed class PublicAppearance : IDisposable
         var compactVisibleOnMainWindow = config.UiCompactVisibleOnMainWindow;
         if (UiGui.Checkbox(UiText.T("Compact visible on main window") + "###UiCompactVisibleOnMainWindowSettings", ref compactVisibleOnMainWindow))
         { changed = true; }
+        var transparencyVisibleOnMainWindow = config.UiTransparencyVisibleOnMainWindow;
+        if (UiGui.Checkbox(UiText.T("Transparency visible on main window") + "###UiTransparencyVisibleOnMainWindowSettings", ref transparencyVisibleOnMainWindow))
+            changed = true;
         var languageVisibleOnMainWindow = config.UiLanguageVisibleOnMainWindow;
         if (UiGui.Checkbox(UiText.T("Language visible on main window") + "###UiLanguageVisibleOnMainWindowSettings", ref languageVisibleOnMainWindow))
         { changed = true; }
@@ -210,7 +213,7 @@ internal sealed class PublicAppearance : IDisposable
         { delay = float.IsFinite(delay) ? Math.Max(0, delay) : 10; changed = true; }
         ImGui.EndDisabled();
         ImGui.EndDisabled();
-        if (changed) AppearancePreferences.Save(config with { UiCompactVisibleOnMainWindow = compactVisibleOnMainWindow, UiLanguageVisibleOnMainWindow = languageVisibleOnMainWindow, UiTransparencyEnabled = transparencyEnabled, UiAutoFade = autoFade, UiWindowOpacityPercent = opacity, UiFadedOpacityPercent = fadedOpacity, UiUnfocusedDelaySeconds = delay });
+        if (changed) AppearancePreferences.Save(config with { UiCompactVisibleOnMainWindow = compactVisibleOnMainWindow, UiTransparencyVisibleOnMainWindow = transparencyVisibleOnMainWindow, UiLanguageVisibleOnMainWindow = languageVisibleOnMainWindow, UiTransparencyEnabled = transparencyEnabled, UiAutoFade = autoFade, UiWindowOpacityPercent = opacity, UiFadedOpacityPercent = fadedOpacity, UiUnfocusedDelaySeconds = delay });
     }
 
     internal void DrawTransparency()

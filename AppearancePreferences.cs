@@ -3,7 +3,8 @@ namespace DDuck.PublicShell;
 // Consumer-owned preferences shared with an authenticated module; the module ABI remains unchanged.
 public readonly record struct AppearanceValues(string Language, uint AccentRgb, bool Compact)
 {
-    public bool UiCompactVisibleOnMainWindow { get; init; } = true;
+    public bool UiCompactVisibleOnMainWindow { get; init; }
+    public bool UiTransparencyVisibleOnMainWindow { get; init; }
     public bool UiLanguageVisibleOnMainWindow { get; init; } = true;
     public bool UiTransparencyEnabled { get; init; } = true;
     public int UiWindowOpacityPercent { get; init; } = 100;
@@ -16,7 +17,7 @@ public static class AppearancePreferences
 {
     private static Func<AppearanceValues>? read;
     private static Action<AppearanceValues>? save;
-    private static AppearanceValues values = new("en", 0xA92CF1, false);
+    private static AppearanceValues values = new("en", 0xA92CF1, true);
 
     public static AppearanceValues Current => read?.Invoke() ?? values;
     public static void Save(AppearanceValues next)

@@ -94,8 +94,11 @@ internal sealed class IntroductionWindow : Window
         { UiGui.SameLineIfFits(210 * scale); appearance.DrawLanguage(); }
         if (AppearancePreferences.Current.UiCompactVisibleOnMainWindow)
         { UiGui.SameLineIfFits(UiGui.CheckboxWidth("C")); appearance.DrawCompact(); }
-        UiGui.SameLineIfFits(UiGui.CheckboxWidth("Transparency"));
-        appearance.DrawTransparency();
+        if (AppearancePreferences.Current.UiTransparencyVisibleOnMainWindow)
+        {
+            UiGui.SameLineIfFits(UiGui.CheckboxWidth("Transparency"));
+            appearance.DrawTransparency();
+        }
         MaterialStatus.Badge(UiText.T("Public access host"), cornerRadius: 4);
         ImGui.Spacing();
 

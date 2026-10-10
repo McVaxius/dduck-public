@@ -16,10 +16,12 @@ internal sealed class PreferencePersistence(IDalamudPluginInterface pluginInterf
     internal AppearanceValues Load()
     {
         var data = Read();
-        return new(data["UiLanguage"]?.GetValue<string>() ?? "en", data["UiAccentRgb"]?.GetValue<uint>() ?? PublicPresentation.ReferenceAccent,
-            data["UiCompact"]?.GetValue<bool>() ?? false)
+        var migrated = data["UiCompactDefaultsApplied"]?.GetValue<bool>() == true;
+        var values = new AppearanceValues(data["UiLanguage"]?.GetValue<string>() ?? "en", data["UiAccentRgb"]?.GetValue<uint>() ?? PublicPresentation.ReferenceAccent,
+            !migrated || (data["UiCompact"]?.GetValue<bool>() ?? true))
         {
-            UiCompactVisibleOnMainWindow = data["UiCompactVisibleOnMainWindow"]?.GetValue<bool>() ?? true,
+            UiCompactVisibleOnMainWindow = migrated && (data["UiCompactVisibleOnMainWindow"]?.GetValue<bool>() ?? false),
+            UiTransparencyVisibleOnMainWindow = migrated && (data["UiTransparencyVisibleOnMainWindow"]?.GetValue<bool>() ?? false),
             UiLanguageVisibleOnMainWindow = data["UiLanguageVisibleOnMainWindow"]?.GetValue<bool>() ?? true,
             UiTransparencyEnabled = data["UiTransparencyEnabled"]?.GetValue<bool>() ?? true,
             UiWindowOpacityPercent = data["UiWindowOpacityPercent"]?.GetValue<int>() ?? 100,
@@ -27,6 +29,8 @@ internal sealed class PreferencePersistence(IDalamudPluginInterface pluginInterf
             UiFadedOpacityPercent = data["UiFadedOpacityPercent"]?.GetValue<int>() ?? 50,
             UiUnfocusedDelaySeconds = data["UiUnfocusedDelaySeconds"]?.GetValue<float>() ?? 10,
         };
+        if (!migrated) Save(values);
+        return values;
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -38,19 +42,24 @@ internal sealed class PreferencePersistence(IDalamudPluginInterface pluginInterf
         config.UiAccentRgb = values.AccentRgb;
         config.UiCompact = values.Compact;
         config.UiCompactVisibleOnMainWindow = values.UiCompactVisibleOnMainWindow;
+        config.UiTransparencyVisibleOnMainWindow = values.UiTransparencyVisibleOnMainWindow;
+        config.UiCompactDefaultsApplied = true;
         config.UiLanguageVisibleOnMainWindow = values.UiLanguageVisibleOnMainWindow;
         config.UiTransparencyEnabled = values.UiTransparencyEnabled;
         config.UiWindowOpacityPercent = values.UiWindowOpacityPercent;
         config.UiAutoFade = values.UiAutoFade;
         config.UiFadedOpacityPercent = values.UiFadedOpacityPercent;
         config.UiUnfocusedDelaySeconds = values.UiUnfocusedDelaySeconds;
-        config.Save();
+        // The public shell loads these preferences before the local module injects its services.
+        pluginInterface.SavePluginConfig(config);
 #else
         var data = Read();
         data["UiLanguage"] = values.Language;
         data["UiAccentRgb"] = values.AccentRgb;
         data["UiCompact"] = values.Compact;
         data["UiCompactVisibleOnMainWindow"] = values.UiCompactVisibleOnMainWindow;
+        data["UiTransparencyVisibleOnMainWindow"] = values.UiTransparencyVisibleOnMainWindow;
+        data["UiCompactDefaultsApplied"] = true;
         data["UiLanguageVisibleOnMainWindow"] = values.UiLanguageVisibleOnMainWindow;
         data["UiTransparencyEnabled"] = values.UiTransparencyEnabled;
         data["UiWindowOpacityPercent"] = values.UiWindowOpacityPercent;
