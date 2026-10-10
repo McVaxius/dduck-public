@@ -148,7 +148,7 @@ namespace DDuck.PublicShell
 {
     internal sealed class IntroductionWindow : Dalamud.Interface.Windowing.Window
     {
-        public IntroductionWindow(IDalamudPluginInterface pi, ITextureProvider textures, ModuleLoader loader, Action refresh, Ui.PublicAppearance appearance) : base("Introduction") { }
+        public IntroductionWindow(IDalamudPluginInterface pi, ITextureProvider textures, ModuleLoader loader, Action refresh, Ui.PublicAppearance appearance, Dalamud.Plugin.Services.ICommandManager commands) : base("Introduction") { }
         public void OpenSettings() => IsOpen = true;
         public override void Draw() { }
     }

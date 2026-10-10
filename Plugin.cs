@@ -40,7 +40,7 @@ public sealed class Plugin : IDalamudPlugin
                 AppearancePreferences.Initialize(preferences.Load, preferences.Save);
                 appearance = new Ui.PublicAppearance(pluginInterface, textures);
                 cleanup.Add(appearance.Dispose);
-                introduction = new IntroductionWindow(pluginInterface, textures, loader, RefreshAccess, appearance);
+                introduction = new IntroductionWindow(pluginInterface, textures, loader, RefreshAccess, appearance, commands);
                 publicWindow = introduction;
             }
             else publicWindow = new ReleaseRequiredWindow();

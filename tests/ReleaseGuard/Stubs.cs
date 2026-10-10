@@ -184,7 +184,7 @@ namespace DDuck.PublicShell
     internal static class BuildInfo { public const string Version = "1.0.0.0"; }
     internal sealed class IntroductionWindow : Dalamud.Interface.Windowing.Window
     {
-        public IntroductionWindow(IDalamudPluginInterface pi, ITextureProvider textures, ModuleLoader loader, Action refresh, object presentation) : base("NormalIntroduction") => State.Current.IntroductionCreates++;
+        public IntroductionWindow(IDalamudPluginInterface pi, ITextureProvider textures, ModuleLoader loader, Action refresh, object presentation, Dalamud.Plugin.Services.ICommandManager commands) : base("NormalIntroduction") => State.Current.IntroductionCreates++;
         public void OpenSettings() { State.Current.SettingsOpens++; IsOpen = true; }
         public override void Draw() => State.Current.FrameText.Add("Normal introduction");
     }

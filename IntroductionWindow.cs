@@ -17,6 +17,9 @@ namespace DDuck.PublicShell;
 
 internal sealed class IntroductionWindow : Window
 {
+    private readonly AethertekUI.Dalamud.MaterialSupportLog supportLog = new();
+    private readonly IDalamudPluginInterface supportPluginInterface;
+    private readonly ICommandManager supportCommands;
     private readonly MaterialWindowMotion motion = new();
     private readonly AethertekUI.MaterialWindowOpacity windowOpacity = new();
     private const string DiscordUrl = "https://discord.gg/ac6gjDvR8R";
@@ -30,9 +33,11 @@ internal sealed class IntroductionWindow : Window
     private readonly ModuleLoader loader;
     private readonly Action refresh;
 
-    public IntroductionWindow(IDalamudPluginInterface pluginInterface, ITextureProvider textures, ModuleLoader loader, Action refresh, PublicAppearance appearance)
+    public IntroductionWindow(IDalamudPluginInterface pluginInterface, ITextureProvider textures, ModuleLoader loader, Action refresh, PublicAppearance appearance, ICommandManager supportCommands)
         : base($"Deep Ducking v{BuildInfo.Version}###DDuck.PublicShell.Introduction")
     {
+        supportPluginInterface = pluginInterface;
+        this.supportCommands = supportCommands;
         this.appearance = appearance;
         this.loader = loader;
         this.refresh = refresh;
@@ -121,6 +126,8 @@ internal sealed class IntroductionWindow : Window
             });
         }
         ImGui.Spacing();
+        supportLog.Draw(supportPluginInterface, key => UiText.T(key),
+            path => System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo { FileName = path, UseShellExecute = true }), ex => Plugin.Log?.Error(ex, "Dalamud log export failed."), supportCommands);
         if (openAppearanceSection) { ImGui.SetNextItemOpen(true); openAppearanceSection = false; }
         if (MaterialText.CollapsingHeader(UiText.T("Window appearance") + "###WindowAppearanceSection"))
             appearance.DrawWindowAppearance();
