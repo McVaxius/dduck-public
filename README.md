@@ -2,9 +2,9 @@
 
 Compact mode is enabled once on upgrade. Main Compact and Transparency shortcuts start hidden; Window appearance can restore either shortcut independently and change density or opacity. Later loads retain those choices and unrelated settings.
 
-This repository contains the complete DDuck public host: introduction, authenticated module loader, manifest validation, and access IPC. Open it with `/dduck` or `/dd`. Automation source remains in `Z:\DDuck`; the public shell builds independently.
+This repository contains the complete DDuck public host: introduction, authenticated module loader, manifest validation, and access IPC. Open it with `/deepducking`; `/dduck` remains an alias. `/dd` is skipped with a warning when DailyDuty is installed, even if unloaded, or another plugin owns the command. Only commands registered by this host are removed on unload. Automation source remains in `Z:\DDuck`; the public shell builds independently.
 
-The public version is **1.0.0.7**. Its CLR assembly identity is **1.0.0.0**, the stable module ABI. Private module versions advance independently.
+The public version is **1.0.0.10**. Its CLR assembly identity is **1.0.0.0**, the stable module ABI. Private module versions advance independently.
 
 The introduction provides regular and compact layouts, colour and language selectors, and managed host fonts. The language choices include Vietnamese, Brazilian Portuguese, Indonesian, Polish, Turkish and Hindi. Its appearance preferences use the existing plugin configuration and are shared with the authenticated module while preserving private and unknown configuration fields. Window appearance keeps colour, language and compact controls available when their Main shortcuts are hidden. Transparency defaults to 100% opacity and fades to 50% after ten unfocused seconds; settings retain both opacity values and the delay. The titlebar keeps appearance and installed-access shortcuts. Main branding and the expanded/collapsed title use the packaged icon, with reserved space while its texture loads. In regular mode, access instructions and the check button sit beside each other when space permits and stack in narrow windows. Community buttons use shared Discord and Ko-fi artwork; access-failure text wraps to the visible window width. Image changes still require game/GPU acceptance; the public host starts automation only through its separately authenticated module.
 
@@ -86,3 +86,9 @@ DDuck's existing AGPL-3.0-or-later license and third-party notices are retained.
 Use **Copy / ZIP Dalamud log** in the introduction window, below the community/support information to create a local ZIP and open its folder. At 100 MiB or above, the first click warns that logging may have stopped and recent activity may be missing; click **Export capped log anyway** only if you still want that snapshot. Share the ZIP manually and remove exports when no longer needed. **Open Export Folder** reopens the completed export’s folder.
 
 When XA Slave is loaded, **Open XA Slave log tools** opens its **Utility > XA Mods** panel, which contains Dalamud Log Cleaner. The existing **Copy / ZIP Dalamud log** action remains separate. Opening the panel does not run cleanup or change XA Slave settings.
+
+## 2026-10-11 command compatibility
+
+The public host now registers `/deepducking` and retains `/dduck`, reserving `/dd` for DailyDuty when installed and preserving any existing foreign handler. This change belongs to the public host: an Access package alone cannot repair an older host that fails during command registration. The full development DLL links the current host source. The protected package needs the updated host when testing that collision; public publication remains a separate release step.
+
+The public release version is aligned with the private test version at 1.0.0.10 at the user's request; CLR identity remains 1.0.0.0.

@@ -6,7 +6,7 @@ public sealed class State
 {
     public static State Current = null!;
     public string Failure = "", CleanupFailure = "";
-    public bool LogFailure, RetainDraw, NoModule, ProvidersBeforeLoad;
+    public bool LogFailure, RetainDraw, NoModule, ProvidersBeforeLoad, DailyDutyInstalled, DailyDutyLoaded;
     public bool IntroductionOpen;
     public readonly Exception Original = new InvalidOperationException("construction fault");
     public int LoaderDisposals, Warnings, Windows, Draws, PrivateDraws, Opens;
@@ -34,12 +34,14 @@ public sealed class Commands(State state) : ICommandManager
 }
 public sealed class Log(State state) : IPluginLog
 {
+    public void Warning(string message, params object[] arguments) { state.Warnings++; if (state.LogFailure) throw new Exception("logging fault"); }
     public void Error(string message, params object[] arguments) { if (state.LogFailure) throw new Exception("logging fault"); }
     public void Warning(Exception error, string message) { state.Warnings++; if (state.LogFailure) throw new Exception("logging fault"); }
 }
 public sealed class Textures : ITextureProvider { }
 public sealed class TestInterface(State state) : IDalamudPluginInterface
 {
+    public IReadOnlyList<InstalledPlugin> InstalledPlugins => state.DailyDutyInstalled ? [new("DailyDuty", state.DailyDutyLoaded)] : [];
     private readonly Dictionary<string, IProvider> providers = [];
     public TestUi UiBuilder { get; } = new(state);
     public int ProviderCount => providers.Values.Count(provider => provider.Registered);
@@ -95,14 +97,16 @@ namespace Dalamud.IoC { [AttributeUsage(AttributeTargets.Property)] public seale
 namespace Dalamud.Plugin.Services
 {
     public interface ICommandManager { bool AddHandler(string name, CommandInfo info); void RemoveHandler(string name); }
-    public interface IPluginLog { void Error(string message, params object[] arguments); void Warning(Exception error, string message); }
+    public interface IPluginLog { void Error(string message, params object[] arguments); void Warning(Exception error, string message); void Warning(string message, params object[] arguments); }
     public interface ITextureProvider { }
 }
 namespace Dalamud.Plugin
 {
+    public sealed record InstalledPlugin(string InternalName, bool IsLoaded);
     public interface IDalamudPlugin : IDisposable { }
     public interface IDalamudPluginInterface
     {
+        IReadOnlyList<InstalledPlugin> InstalledPlugins { get; }
         TestUi UiBuilder { get; }
         Provider<T> GetIpcProvider<T>(string name);
         Provider<TArg,T> GetIpcProvider<TArg,T>(string name);

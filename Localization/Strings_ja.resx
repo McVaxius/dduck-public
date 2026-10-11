@@ -198,4 +198,6 @@
   <data name="Opens XA Slave&apos;s Utility &gt; XA Mods panel, which contains Dalamud Log Cleaner." xml:space="preserve"><value>Dalamud Log Cleanerを含むXA SlaveのUtility &gt; XA Modsパネルを開きます。</value></data>
   <data name="XA Slave log tools could not be opened." xml:space="preserve"><value>XA Slaveのログツールを開けませんでした。</value></data>
   <data name="Transparency visible on main window" xml:space="preserve"><value>メインウィンドウに透明度を表示</value></data>
+  <data name="DailyDuty is installed. /dd is unavailable for Deep Ducking; use /deepducking." xml:space="preserve"><value>DailyDutyがインストールされています。Deep Duckingでは/ddを使えません。/deepduckingを使ってください。</value></data>
+  <data name="The /dd command belongs to another plugin. Use /deepducking." xml:space="preserve"><value>/ddは別のプラグインが登録しています。/deepduckingを使ってください。</value></data>
 </root>

@@ -96,6 +96,8 @@ internal sealed class IntroductionWindow : Window
         ImGui.EndGroup();
         MaterialStatus.Badge(UiText.T("Public access host"), cornerRadius: 4);
         ImGui.Spacing();
+        if (Plugin.CommandWarning is { } warning)
+            UiGui.TextColored(MaterialTheme.Current.Colors.Error, warning);
 
         if (compact)
         {

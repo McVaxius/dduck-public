@@ -25,6 +25,7 @@ public sealed class State
 
 public sealed class FakeInterface(State state) : IDalamudPluginInterface
 {
+    public IReadOnlyList<InstalledPlugin> InstalledPlugins => [];
     private readonly Dictionary<string, object> providers = [];
     public FakeUi UiBuilder { get; } = new(state);
     public Dalamud.Plugin.VersionInfo.IDalamudVersionInfo GetDalamudVersion()
@@ -88,6 +89,7 @@ public sealed class FakeCommands : ICommandManager
 }
 public sealed class FakeLog(State state) : IPluginLog
 {
+    public void Warning(string message, params object[] args) => state.Warnings++;
     public void Error(string message, params object[] args) { state.Errors++; state.Messages.Add(message + " " + string.Join(" ", args)); if (state.ThrowLog) throw new Exception("logger failed"); }
     public void Error(Exception error, string message, params object[] args) => Error(message, args);
     public void Warning(Exception error, string message) => state.Warnings++;
@@ -106,14 +108,16 @@ namespace Dalamud.IoC { [AttributeUsage(AttributeTargets.Property)] public seale
 namespace Dalamud.Plugin.Services
 {
     public interface ICommandManager { bool AddHandler(string name, CommandInfo info); void RemoveHandler(string name); }
-    public interface IPluginLog { void Error(string message, params object[] args); void Error(Exception error, string message, params object[] args); void Warning(Exception error, string message); }
+    public interface IPluginLog { void Error(string message, params object[] args); void Error(Exception error, string message, params object[] args); void Warning(Exception error, string message); void Warning(string message, params object[] args); }
     public interface ITextureProvider { }
 }
 namespace Dalamud.Plugin
 {
+    public sealed record InstalledPlugin(string InternalName, bool IsLoaded);
     public interface IDalamudPlugin : IDisposable { }
     public interface IDalamudPluginInterface
     {
+        IReadOnlyList<InstalledPlugin> InstalledPlugins { get; }
         FakeUi UiBuilder { get; }
         Dalamud.Plugin.VersionInfo.IDalamudVersionInfo GetDalamudVersion();
         string GetPluginConfigDirectory();

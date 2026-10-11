@@ -214,4 +214,6 @@
   <data name="Opens XA Slave&apos;s Utility &gt; XA Mods panel, which contains Dalamud Log Cleaner." xml:space="preserve"><value>XA Slave का Utility &gt; XA Mods पैनल खोलता है, जिसमें Dalamud Log Cleaner है।</value></data>
   <data name="XA Slave log tools could not be opened." xml:space="preserve"><value>XA Slave के लॉग उपकरण नहीं खोले जा सके।</value></data>
   <data name="Transparency visible on main window" xml:space="preserve"><value>मुख्य विंडो में पारदर्शिता दिखाएँ</value></data>
+  <data name="DailyDuty is installed. /dd is unavailable for Deep Ducking; use /deepducking." xml:space="preserve"><value>DailyDuty इंस्टॉल है। Deep Ducking के लिए /dd उपलब्ध नहीं है; /deepducking का उपयोग करें।</value></data>
+  <data name="The /dd command belongs to another plugin. Use /deepducking." xml:space="preserve"><value>/dd कमांड किसी दूसरे प्लगइन की है। /deepducking का उपयोग करें।</value></data>
 </root>

@@ -5,7 +5,7 @@ using Dalamud.Interface.Windowing;
 var checks = 0;
 const string message = "You are not on Dalamud Release";
 var prefix = "DDuck.Access.";
-var commands = new[] { "/dduck", "/dd" };
+var commands = new[] { "/deepducking", "/dduck", "/dd" };
 void Check(bool condition, string description) { if (!condition) throw new Exception(description); checks++; }
 Host Create(State state)
 {

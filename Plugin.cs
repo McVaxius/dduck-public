@@ -23,6 +23,7 @@ public sealed class Plugin : IDalamudPlugin
     private readonly IntroductionWindow? introduction;
     private readonly Ui.PublicAppearance? appearance;
     private readonly List<Action> cleanup = [];
+    internal static string? CommandWarning { get; private set; }
     private int disposed;
     private bool IsDisposed => Volatile.Read(ref disposed) != 0;
 
@@ -46,11 +47,25 @@ public sealed class Plugin : IDalamudPlugin
             else publicWindow = new ReleaseRequiredWindow();
             cleanup.Add(windows.RemoveAllWindows);
             windows.AddWindow(publicWindow);
-            foreach (var command in new[] { "/dduck", "/dd" })
+            var dailyDutyInstalled = pluginInterface.InstalledPlugins.Any(plugin => plugin.InternalName == "DailyDuty");
+            CommandWarning = dailyDutyInstalled
+                ? "DailyDuty is installed. /dd is unavailable for Deep Ducking; use /deepducking."
+                : null;
+            foreach (var command in new[] { "/deepducking", "/dduck", "/dd" })
             {
-                if (!commands.AddHandler(command, new CommandInfo(OnCommand) { HelpMessage = "Open Deep Ducking. /dd help opens the command guide (full module required). /dduck is an alias." }))
-                    throw new InvalidOperationException($"The {command} command is already registered.");
+                if (command == "/dd" && dailyDutyInstalled) continue;
+                if (!commands.AddHandler(command, new CommandInfo(OnCommand) { HelpMessage = "Open Deep Ducking. Use /deepducking help for commands. /dduck is an alias; /dd is available when it does not conflict." }))
+                {
+                    if (command != "/dd") throw new InvalidOperationException($"The {command} command is already registered.");
+                    CommandWarning = "The /dd command belongs to another plugin. Use /deepducking.";
+                    continue;
+                }
                 cleanup.Add(() => commands.RemoveHandler(command));
+            }
+            if (CommandWarning != null)
+            {
+                try { log.Warning("[Deep Ducking] {Warning}", CommandWarning); }
+                catch { /* The visible warning still explains the unavailable alias. */ }
             }
             cleanup.Add(() => pluginInterface.UiBuilder.Draw -= Draw);
             pluginInterface.UiBuilder.Draw += Draw;

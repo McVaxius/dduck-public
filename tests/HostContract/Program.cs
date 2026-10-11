@@ -39,10 +39,11 @@ foreach (var fault in new[] { "", "draw", "main", "config", "directory", "valida
         state.Interface.UiBuilder.DrawNow();
         state.Interface.UiBuilder.MainNow();
         state.Interface.UiBuilder.ConfigNow();
+        state.Commands.Handlers["/deepducking"]("/deepducking", "help");
         state.Commands.Handlers["/dduck"]("/dduck", "hello");
         state.Commands.Handlers["/dd"]("/dd", "status");
         Check(state.Draws == 1 && state.PrivateDraws == 1, "Draw forwards exactly once");
-        Check(state.Opens == 1 && state.CommandsSeen.SequenceEqual(new[] { "/dduck config", "/dduck hello", "/dd status" }), "Both aliases and distinct config action forward");
+        Check(state.Opens == 1 && state.CommandsSeen.SequenceEqual(new[] { "/dduck config", "/deepducking help", "/dduck hello", "/dd status" }), "Primary, both aliases and distinct config action forward");
         Check(state.Interface.GetIpcProvider<bool>("DDuck.Access.Refresh.v1").Callback!(), "Refresh reports loaded module");
         host!.Dispose();
         host.Dispose();
@@ -53,7 +54,7 @@ foreach (var fault in new[] { "", "draw", "main", "config", "directory", "valida
     Check(state.Windows == 0 && state.Commands.Handlers.Count == 0, "Windows and both commands removed: " + fault);
 }
 
-foreach (var collision in new[] { "/dduck", "/dd" })
+foreach (var collision in new[] { "/deepducking", "/dduck" })
 {
     var state = new State();
     Action<string, string> other = (_, _) => { };
@@ -64,7 +65,25 @@ foreach (var collision in new[] { "/dduck", "/dd" })
     Check(state.LoaderDisposals == 1 && state.Windows == 0, "Command collision rolls back acquired resources");
 }
 
-foreach (var removal in new[] { "refresh", "validate", "directory", "config", "main", "draw", "/dduck", "/dd", "windows", "loader" })
+foreach (var dailyDutyInstalled in new[] { false, true })
+foreach (var loaded in new[] { false, true })
+foreach (var occupied in new[] { false, true })
+{
+    var state = new State { DailyDutyInstalled = dailyDutyInstalled, DailyDutyLoaded = loaded };
+    Action<string, string> other = (_, _) => { };
+    if (occupied) state.Commands.Handlers["/dd"] = other;
+    var host = Create(state);
+    Check(state.Commands.Handlers.ContainsKey("/deepducking") && state.Commands.Handlers.ContainsKey("/dduck"), "Safe commands load despite alias conflict");
+    Check(state.Commands.Handlers.ContainsKey("/dd") == (occupied || !dailyDutyInstalled), "Installed DailyDuty reserves alias even when unloaded");
+    Check(Host.CommandWarning != null == (dailyDutyInstalled || occupied), "Alias warning matches installation/ownership");
+    state.Commands.Handlers["/deepducking"]("/deepducking", "status");
+    Check(state.CommandsSeen.Last() == "/deepducking status", "Primary command forwards with reserved alias");
+    host.Dispose();
+    Check(state.Commands.Handlers.Count == (occupied ? 1 : 0), "Only owned handlers removed");
+    Check(!occupied || state.Commands.Handlers["/dd"] == other && !state.Commands.Removals.Contains("/dd"), "Foreign alias retained on unload");
+}
+
+foreach (var removal in new[] { "refresh", "validate", "directory", "config", "main", "draw", "/deepducking", "/dduck", "/dd", "windows", "loader" })
 {
     var state = new State { CleanupFailure = removal, LogFailure = true };
     var host = Create(state);
