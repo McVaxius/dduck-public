@@ -124,6 +124,26 @@ internal sealed class PublicAppearance : IDisposable
         windows.Draw();
     }
 
+    internal MaterialAppearanceTitleBar RegisterTitleBar(Window owner)
+        => MaterialAppearanceTitleBar.Register(owner,
+            () => new(UiText.T("Language"), UiText.T("Compact mode"), UiText.T("Transparency"), UiText.T("Color")),
+            () => DrawLanguage("titlebar-language"),
+            () => AppearancePreferences.Save(AppearancePreferences.Current with { Compact = !AppearancePreferences.Current.Compact }),
+            DrawWindowAppearance, DrawTitleColour,
+            () => new(AppearancePreferences.Current.UiLanguageVisibleOnMainWindow, AppearancePreferences.Current.UiCompactVisibleOnMainWindow,
+                AppearancePreferences.Current.UiTransparencyVisibleOnMainWindow, true));
+
+    private void DrawTitleColour()
+    {
+        using var controls = MaterialControls.Push(PublicPresentation.Controls());
+        if (!MaterialAppearanceSelector.DrawPalette("titlebar-colour", ref accentDraft,
+            new(UiText.T("Color"), UiText.T("Language"), UiText.T("Teal"), UiText.T("Blue"), UiText.T("Pink"), UiText.T("Custom RGB")))) return;
+        var rgb = ((uint)Math.Clamp((int)MathF.Round(accentDraft.X * 255), 0, 255) << 16)
+            | ((uint)Math.Clamp((int)MathF.Round(accentDraft.Y * 255), 0, 255) << 8)
+            | (uint)Math.Clamp((int)MathF.Round(accentDraft.Z * 255), 0, 255);
+        AppearancePreferences.Save(AppearancePreferences.Current with { AccentRgb = rgb });
+    }
+
     internal void DrawSelector(string id = "appearance")
     {
         var language = appliedLanguage;

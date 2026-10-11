@@ -17,6 +17,7 @@ namespace DDuck.PublicShell;
 
 internal sealed class IntroductionWindow : Window
 {
+    private readonly AethertekUI.Dalamud.MaterialAppearanceTitleBar appearanceTitleBar;
     private readonly AethertekUI.Dalamud.MaterialSupportLog supportLog = new();
     private readonly IDalamudPluginInterface supportPluginInterface;
     private readonly ICommandManager supportCommands;
@@ -59,10 +60,12 @@ internal sealed class IntroductionWindow : Window
             ShowTooltip = () => MaterialText.SetTooltip(UiText.T("Check installed access")
                 + (loader.Failed ? "\n" + UiText.T("Access could not initialize. Check /xllog for [Access] details.") : "")),
         });
+        appearanceTitleBar = appearance.RegisterTitleBar(this);
     }
 
     public override void PreDraw()
     {
+        appearanceTitleBar.RefreshVisibility();
         if (openAppearanceSection) ImGui.SetNextWindowCollapsed(false, ImGuiCond.Always);
         UiGui.ReserveTitleSpace(this, UiText.F("Deep Ducking v{0}", BuildInfo.Version), 360);
         motion.Prepare(this, reducedMotion: false, roundedCorners: true);
@@ -72,6 +75,7 @@ internal sealed class IntroductionWindow : Window
     {
         motion.Restore(this);
         UiGui.PaintTitleImage(this, UiText.F("Deep Ducking v{0}", BuildInfo.Version), icon);
+        appearanceTitleBar.DrawPopups();
         appearance.ApplyWindowOpacity(windowOpacity, WindowName);
     }
 
@@ -90,15 +94,6 @@ internal sealed class IntroductionWindow : Window
             UiGui.TextColored(Accent, "D E E P  D U C K I N G");
         if (!compact) UiGui.FTextDisabled($"By McVaxius  |  Version {BuildInfo.Version}");
         ImGui.EndGroup();
-        if (AppearancePreferences.Current.UiLanguageVisibleOnMainWindow)
-        { UiGui.SameLineIfFits(210 * scale); appearance.DrawLanguage(); }
-        if (AppearancePreferences.Current.UiCompactVisibleOnMainWindow)
-        { UiGui.SameLineIfFits(UiGui.CheckboxWidth("C")); appearance.DrawCompact(); }
-        if (AppearancePreferences.Current.UiTransparencyVisibleOnMainWindow)
-        {
-            UiGui.SameLineIfFits(UiGui.CheckboxWidth("Transparency"));
-            appearance.DrawTransparency();
-        }
         MaterialStatus.Badge(UiText.T("Public access host"), cornerRadius: 4);
         ImGui.Spacing();
 
