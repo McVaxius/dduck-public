@@ -27,6 +27,9 @@ internal sealed class PublicAppearance : IDisposable
     private string appliedLanguage = "";
     private uint appliedAccent;
     private Vector3 accentDraft;
+    private MaterialColorSettings colorDraft = new();
+    private MaterialColorSettings? appliedSavedColors;
+    private MaterialColorSettings? appliedColors;
     private int checkedGeneration = -1;
     private bool fontIssueLogged;
     private readonly MaterialWindowFold fontStatusFold = new();
@@ -48,10 +51,17 @@ internal sealed class PublicAppearance : IDisposable
             hindiAvailable = false;
             fontIssueLogged = false;
         }
-        if (theme is null || appliedAccent != (AppearancePreferences.Current.AccentRgb & 0xFFFFFF))
+        var savedColors = AppearancePreferences.Current.UiColors ?? new MaterialColorSettings();
+        if (savedColors != appliedSavedColors)
+        {
+            colorDraft = savedColors;
+            appliedSavedColors = savedColors;
+        }
+        if (theme is null || appliedAccent != (AppearancePreferences.Current.AccentRgb & 0xFFFFFF) || colorDraft != appliedColors)
         {
             appliedAccent = AppearancePreferences.Current.AccentRgb & 0xFFFFFF;
-            theme = PublicPresentation.Theme(appliedAccent);
+            appliedColors = colorDraft;
+            theme = PublicPresentation.Theme(appliedAccent, colorDraft);
             var rgb = PublicPresentation.Rgb(appliedAccent);
             accentDraft = new(rgb.X, rgb.Y, rgb.Z);
         }
@@ -133,27 +143,20 @@ internal sealed class PublicAppearance : IDisposable
             () => new(AppearancePreferences.Current.UiLanguageVisibleOnMainWindow, AppearancePreferences.Current.UiCompactVisibleOnMainWindow,
                 AppearancePreferences.Current.UiTransparencyVisibleOnMainWindow, true));
 
-    private void DrawTitleColour()
-    {
-        using var controls = MaterialControls.Push(PublicPresentation.Controls());
-        if (!MaterialAppearanceSelector.DrawPalette("titlebar-colour", ref accentDraft,
-            new(UiText.T("Color"), UiText.T("Language"), UiText.T("Teal"), UiText.T("Blue"), UiText.T("Pink"), UiText.T("Custom RGB")))) return;
-        var rgb = ((uint)Math.Clamp((int)MathF.Round(accentDraft.X * 255), 0, 255) << 16)
-            | ((uint)Math.Clamp((int)MathF.Round(accentDraft.Y * 255), 0, 255) << 8)
-            | (uint)Math.Clamp((int)MathF.Round(accentDraft.Z * 255), 0, 255);
-        AppearancePreferences.Save(AppearancePreferences.Current with { AccentRgb = rgb });
-    }
+    private void DrawTitleColour() => DrawSelector("titlebar-colour", showLanguage: false);
 
-    internal void DrawSelector(string id = "appearance")
+    internal void DrawSelector(string id = "appearance", bool showLanguage = true)
     {
-        var language = appliedLanguage;
         using var controls = MaterialControls.Push(PublicPresentation.Controls());
-        var changed = MaterialAppearanceSelector.Draw(id, ref accentDraft, ref language, Languages,
-            new(UiText.T("Color"), UiText.T("Language"), UiText.T("Teal"), UiText.T("Blue"), UiText.T("Pink"), UiText.T("Custom RGB")), 140);
-        if (!changed.AccentChanged && !changed.LanguageChanged) return;
-        var rgb = ((uint)Math.Clamp((int)MathF.Round(accentDraft.X * 255), 0, 255) << 16)
-            | ((uint)Math.Clamp((int)MathF.Round(accentDraft.Y * 255), 0, 255) << 8) | (uint)Math.Clamp((int)MathF.Round(accentDraft.Z * 255), 0, 255);
-        AppearancePreferences.Save(AppearancePreferences.Current with { Language = language, AccentRgb = rgb });
+        if (MaterialAppearanceSelector.DrawColors(id, ref colorDraft, ref accentDraft,
+            new(UiText.T("Color"), UiText.T("Language"), UiText.T("Teal"), UiText.T("Blue"), UiText.T("Pink"), UiText.T("Custom RGB")),
+            new(UiText.T("Auto"), UiText.T("Picker"), UiText.T("Default"), UiText.T("Background, controls and text follow your theme."),
+                UiText.T("Theme colour"), UiText.T("Choose each colour independently."), UiText.T("Background"), UiText.T("Controls"),
+                UiText.T("Text"), UiText.T("Aa  Preview text"), UiText.T("Control"),
+                UiText.T("Switch to Picker to set each colour yourself."), UiText.T("Switch back to Auto to use the automatic theme.")),
+            AppearancePreferences.Current.Compact ? 298 : 316))
+            AppearancePreferences.Save(AppearancePreferences.Current with { UiColors = colorDraft, AccentRgb = MaterialColorSettings.ToRgb(accentDraft) });
+        if (showLanguage) DrawLanguage(id);
     }
 
     internal void DrawCompact(string id = "C")
@@ -172,7 +175,9 @@ internal sealed class PublicAppearance : IDisposable
         text = new(appliedLanguage, PushFont);
         fonts = new(pluginInterface.UiBuilder.FontAtlas, text.GlyphRanges(), appliedLanguage);
         appliedAccent = AppearancePreferences.Current.AccentRgb & 0xFFFFFF;
-        theme = PublicPresentation.Theme(appliedAccent);
+        colorDraft = AppearancePreferences.Current.UiColors ?? new();
+        appliedSavedColors = appliedColors = colorDraft;
+        theme = PublicPresentation.Theme(appliedAccent, colorDraft);
         var rgb = PublicPresentation.Rgb(appliedAccent);
         accentDraft = new(rgb.X, rgb.Y, rgb.Z);
     }

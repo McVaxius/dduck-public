@@ -3,6 +3,7 @@ namespace DDuck.PublicShell;
 // Consumer-owned preferences shared with an authenticated module; the module ABI remains unchanged.
 public readonly record struct AppearanceValues(string Language, uint AccentRgb, bool Compact)
 {
+    public AethertekUI.MaterialColorSettings UiColors { get; init; } = new();
     public bool UiCompactVisibleOnMainWindow { get; init; }
     public bool UiTransparencyVisibleOnMainWindow { get; init; }
     public bool UiLanguageVisibleOnMainWindow { get; init; } = true;

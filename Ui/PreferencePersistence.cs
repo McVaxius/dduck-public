@@ -20,6 +20,7 @@ internal sealed class PreferencePersistence(IDalamudPluginInterface pluginInterf
         var values = new AppearanceValues(data["UiLanguage"]?.GetValue<string>() ?? "en", data["UiAccentRgb"]?.GetValue<uint>() ?? PublicPresentation.ReferenceAccent,
             !migrated || (data["UiCompact"]?.GetValue<bool>() ?? true))
         {
+            UiColors = data["UiColors"]?.Deserialize<AethertekUI.MaterialColorSettings>(new JsonSerializerOptions { Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() } }) ?? new(),
             UiCompactVisibleOnMainWindow = migrated && (data["UiCompactVisibleOnMainWindow"]?.GetValue<bool>() ?? false),
             UiTransparencyVisibleOnMainWindow = migrated && (data["UiTransparencyVisibleOnMainWindow"]?.GetValue<bool>() ?? false),
             UiLanguageVisibleOnMainWindow = data["UiLanguageVisibleOnMainWindow"]?.GetValue<bool>() ?? true,
@@ -40,6 +41,7 @@ internal sealed class PreferencePersistence(IDalamudPluginInterface pluginInterf
         var config = global::DDuck.Configuration.Load(pluginInterface);
         config.UiLanguage = values.Language;
         config.UiAccentRgb = values.AccentRgb;
+        config.UiColors = values.UiColors;
         config.UiCompact = values.Compact;
         config.UiCompactVisibleOnMainWindow = values.UiCompactVisibleOnMainWindow;
         config.UiTransparencyVisibleOnMainWindow = values.UiTransparencyVisibleOnMainWindow;
@@ -56,6 +58,7 @@ internal sealed class PreferencePersistence(IDalamudPluginInterface pluginInterf
         var data = Read();
         data["UiLanguage"] = values.Language;
         data["UiAccentRgb"] = values.AccentRgb;
+        data["UiColors"] = JsonSerializer.SerializeToNode(values.UiColors);
         data["UiCompact"] = values.Compact;
         data["UiCompactVisibleOnMainWindow"] = values.UiCompactVisibleOnMainWindow;
         data["UiTransparencyVisibleOnMainWindow"] = values.UiTransparencyVisibleOnMainWindow;

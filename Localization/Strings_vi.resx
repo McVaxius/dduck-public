@@ -200,4 +200,19 @@
   <data name="Transparency visible on main window" xml:space="preserve"><value>Hiện độ trong suốt trên cửa sổ chính</value></data>
   <data name="DailyDuty is installed. /dd is unavailable for Deep Ducking; use /deepducking." xml:space="preserve"><value>DailyDuty đã được cài đặt. /dd không dùng được cho Deep Ducking; hãy dùng /deepducking.</value></data>
   <data name="The /dd command belongs to another plugin. Use /deepducking." xml:space="preserve"><value>Lệnh /dd thuộc về plugin khác. Hãy dùng /deepducking.</value></data>
+  <data name="Auto" xml:space="preserve">
+    <value>Tự động</value>
+  </data>
+  <data name="Picker" xml:space="preserve"><value>Bộ chọn</value></data>
+  <data name="Default" xml:space="preserve"><value>Mặc định</value></data>
+  <data name="Background, controls and text follow your theme." xml:space="preserve"><value>Nền, điều khiển và văn bản theo chủ đề của bạn.</value></data>
+  <data name="Theme colour" xml:space="preserve"><value>Màu chủ đề</value></data>
+  <data name="Choose each colour independently." xml:space="preserve"><value>Chọn từng màu riêng biệt.</value></data>
+  <data name="Background" xml:space="preserve"><value>Nền</value></data>
+  <data name="Controls" xml:space="preserve"><value>Điều khiển</value></data>
+  <data name="Text" xml:space="preserve"><value>Văn bản</value></data>
+  <data name="Aa  Preview text" xml:space="preserve"><value>Aa  Xem trước văn bản</value></data>
+  <data name="Control" xml:space="preserve"><value>Điều khiển</value></data>
+  <data name="Switch to Picker to set each colour yourself." xml:space="preserve"><value>Chuyển sang Bộ chọn để tự đặt từng màu.</value></data>
+  <data name="Switch back to Auto to use the automatic theme." xml:space="preserve"><value>Chuyển về Tự động để dùng chủ đề tự động.</value></data>
 </root>
