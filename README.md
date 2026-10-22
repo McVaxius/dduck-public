@@ -44,12 +44,7 @@ Pass `-p:ReleaseGuardLocalDev=true` to check the shared developer-host path.
 
 ## Build
 
-Select the current supported bundle with `DalamudLibPath` / `DALAMUD_HOME` before
-entering the environment. The public host, private module/build reference and
-AethertekUI adapter must use that same Dalamud assembly identity. A Dalamud patch
-update requires rebuilding these artifacts; only host-supplied ClientStructs has
-the existing version-compatibility exception. Package verification must exercise
-the current public host's collectible resolver, not only a build reference.
+Private modules and public shells use the current Dalamud host's ClientStructs and Dalamud assemblies. Older compiled references bind to those host instances across compatible updates; no fixed ClientStructs or Dalamud patch number, replacement ClientStructs copy, or product-version bump is needed solely for that change. Builds use the current supported bundle selected by `DalamudLibPath` / `DALAMUD_HOME`; existing public CI provisions the latest bundle. Local private launchers reuse that selected local bundle and do not download a replacement. Keep Dalamud current. Actual removed APIs or native layout changes can require C# changes and a rebuild. Package verification exercises the actual public host and checks host identity, load context and trusted paths while retaining signed payloads and exact plugin/UI contracts. Existing installed shells require one update to receive this resolver change; build/test does not install it.
 
 With the sibling `Z:\aethertekUI` checkout, pinned .NET SDK 10.0.201 and the Dalamud API 15 development references installed:
 
