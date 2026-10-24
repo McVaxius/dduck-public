@@ -21,6 +21,10 @@ internal sealed class PublicAppearance : IDisposable
     private UiText text;
     private PublicFonts fonts;
     private MaterialTheme theme;
+    private MaterialUiSoundPlayer? uiSounds;
+    private bool appliedSoundsMuted = true;
+    private readonly Dictionary<Window, MaterialAppearanceTitleBar> titleBars = new();
+    private readonly Dictionary<Window, TitleBarButton> soundButtons = new();
     private bool hindiAvailable;
     private MaterialOptions<string> Languages => new(UiText.Languages.Select(l => new MaterialOption<string>(l.Code, l.Code,
         l.Code == "hi" && !hindiAvailable ? "Hindi (unavailable)" : l.Name, l.Code == "hi" && !hindiAvailable)).ToArray());
@@ -62,10 +66,17 @@ internal sealed class PublicAppearance : IDisposable
             appliedAccent = AppearancePreferences.Current.AccentRgb & 0xFFFFFF;
             appliedColors = colorDraft;
             theme = PublicPresentation.Theme(appliedAccent, colorDraft);
+            theme.Feedback = PlaySound;
+            if (!theme.IsLcars) uiSounds?.Stop();
             var rgb = PublicPresentation.Rgb(appliedAccent);
             accentDraft = new(rgb.X, rgb.Y, rgb.Z);
         }
         theme.Density = AppearancePreferences.Current.Compact ? MaterialDensity.Compact : MaterialDensity.Standard;
+        if (appliedSoundsMuted != AppearancePreferences.Current.UiLcarsSoundsMuted)
+        {
+            appliedSoundsMuted = AppearancePreferences.Current.UiLcarsSoundsMuted;
+            if (appliedSoundsMuted) uiSounds?.Stop();
+        }
     }
 
     internal void Draw(WindowSystem windows)
@@ -103,6 +114,7 @@ internal sealed class PublicAppearance : IDisposable
                 if (visible)
                 {
                     fontStatusDecorations.Paint();
+                    if (theme.IsLcars) MaterialLcars.Header("Deep Ducking");
                     var failed = fonts.LoadException is not null || fontIssueLogged;
                     MaterialText.TextWrapped(appliedLanguage == "hi"
                         ? failed ? "Hindi is unavailable. Use English to recover; your saved language is unchanged." : "Loading UI fonts..."
@@ -129,19 +141,53 @@ internal sealed class PublicAppearance : IDisposable
         style.Style(ImGuiStyleVar.CellPadding, new Vector2(AppearancePreferences.Current.Compact ? 6 : 10, AppearancePreferences.Current.Compact ? 4 : 8) * s);
         style.Style(ImGuiStyleVar.FrameRounding, 4 * s);
         style.Style(ImGuiStyleVar.ChildRounding, 4 * s);
+        if (theme.IsLcars)
+        {
+            style.Color(ImGuiCol.CheckMark, MaterialLcars.ControlBlue);
+            style.Color(ImGuiCol.SliderGrab, MaterialLcars.ControlBlue);
+            style.Color(ImGuiCol.SliderGrabActive, MaterialLcars.ControlBlue);
+        }
         using var body = fonts.Push(UiFontRole.Body);
         using var chrome = MaterialWindowChrome.Push();
+        PrepareTitleBars();
         windows.Draw();
     }
 
     internal MaterialAppearanceTitleBar RegisterTitleBar(Window owner)
-        => MaterialAppearanceTitleBar.Register(owner,
+    {
+        var actions = MaterialAppearanceTitleBar.Register(owner,
             () => new(UiText.T("Language"), UiText.T("Compact mode"), UiText.T("Transparency"), UiText.T("Color")),
             () => DrawLanguage("titlebar-language"),
             () => AppearancePreferences.Save(AppearancePreferences.Current with { Compact = !AppearancePreferences.Current.Compact }),
             DrawWindowAppearance, DrawTitleColour,
             () => new(AppearancePreferences.Current.UiLanguageVisibleOnMainWindow, AppearancePreferences.Current.UiCompactVisibleOnMainWindow,
                 AppearancePreferences.Current.UiTransparencyVisibleOnMainWindow, true));
+        titleBars.Add(owner, actions);
+        return actions;
+    }
+
+    private void PrepareTitleBars()
+    {
+        foreach (var (owner, actions) in titleBars)
+        {
+            actions.SetLcarsIcons(theme.IsLcars);
+            actions.RefreshVisibility();
+            if (!soundButtons.TryGetValue(owner, out var speaker))
+            {
+                speaker = new()
+                {
+                    Priority = (int)Math.Max(int.MinValue + 1L, owner.TitleBarButtons.Select(static button => (long)button.Priority).DefaultIfEmpty(0).Min() - 1),
+                    IconOffset = new(2, 1),
+                    Click = button => { if (button == ImGuiMouseButton.Left && LcarsActive) SetSoundsMuted(!AppearancePreferences.Current.UiLcarsSoundsMuted); },
+                    ShowTooltip = () => MaterialText.SetTooltip(UiText.T(AppearancePreferences.Current.UiLcarsSoundsMuted ? "UI sounds muted" : "UI sounds on")),
+                };
+                soundButtons.Add(owner, speaker);
+            }
+            speaker.Icon = AppearancePreferences.Current.UiLcarsSoundsMuted ? Dalamud.Interface.FontAwesomeIcon.VolumeMute : Dalamud.Interface.FontAwesomeIcon.VolumeUp;
+            if (theme.IsLcars && !owner.TitleBarButtons.Contains(speaker)) owner.TitleBarButtons.Add(speaker);
+            else if (!theme.IsLcars) owner.TitleBarButtons.Remove(speaker);
+        }
+    }
 
     private void DrawTitleColour() => DrawSelector("titlebar-colour", showLanguage: false);
 
@@ -153,9 +199,13 @@ internal sealed class PublicAppearance : IDisposable
             new(UiText.T("Auto"), UiText.T("Picker"), UiText.T("Default"), UiText.T("Background, controls and text follow your theme."),
                 UiText.T("Theme colour"), UiText.T("Choose each colour independently."), UiText.T("Background"), UiText.T("Controls"),
                 UiText.T("Text"), UiText.T("Aa  Preview text"), UiText.T("Control"),
-                UiText.T("Switch to Picker to set each colour yourself."), UiText.T("Switch back to Auto to use the automatic theme.")),
+                UiText.T("Switch to Picker to set each colour yourself."), UiText.T("Switch back to Auto to use the automatic theme."))
+            { Lcars = UiText.T("LCARS"), LcarsHelp = UiText.T("LCARS panels, bars and controls") },
             AppearancePreferences.Current.Compact ? 298 : 316))
+        {
             AppearancePreferences.Save(AppearancePreferences.Current with { UiColors = colorDraft, AccentRgb = MaterialColorSettings.ToRgb(accentDraft) });
+            if (!LcarsActive) uiSounds?.Stop();
+        }
         if (showLanguage) DrawLanguage(id);
     }
 
@@ -178,12 +228,54 @@ internal sealed class PublicAppearance : IDisposable
         colorDraft = AppearancePreferences.Current.UiColors ?? new();
         appliedSavedColors = appliedColors = colorDraft;
         theme = PublicPresentation.Theme(appliedAccent, colorDraft);
+        theme.Feedback = PlaySound;
         var rgb = PublicPresentation.Rgb(appliedAccent);
         accentDraft = new(rgb.X, rgb.Y, rgb.Z);
     }
     private IDisposable PushFont(UiFontRole role) => fonts.Push(role);
 
-    public void Dispose() { shapedText.Dispose(); fonts?.Dispose(); text?.Dispose(); }
+    private bool LcarsActive => AppearancePreferences.Current.UiColors?.Mode == MaterialColorMode.Lcars;
+
+    private void PlaySound(MaterialUiSoundCue cue)
+    {
+        if (LcarsActive && !AppearancePreferences.Current.UiLcarsSoundsMuted)
+            (uiSounds ??= new MaterialUiSoundPlayer()).TryPlay(cue);
+    }
+
+    private void SetSoundsMuted(bool muted)
+    {
+        AppearancePreferences.Save(AppearancePreferences.Current with { UiLcarsSoundsMuted = muted });
+        if (muted) uiSounds?.Stop();
+    }
+
+    private void DrawLcarsSounds()
+    {
+        MaterialSettings.Section(UiText.T("LCARS UI sounds"));
+        ImGui.BeginDisabled(!LcarsActive);
+        try
+        {
+            var enabled = !AppearancePreferences.Current.UiLcarsSoundsMuted;
+            if (UiGui.Checkbox("UI sounds", ref enabled)) SetSoundsMuted(!enabled);
+            UiGui.TextWrapped("Custom UI tones. The titlebar speaker toggles the same setting.");
+            ImGui.BeginDisabled(AppearancePreferences.Current.UiLcarsSoundsMuted);
+            try
+            {
+                var current = MaterialTheme.Current;
+                var feedback = current.Feedback;
+                bool preview;
+                try { current.Feedback = null; preview = UiGui.Button("Preview sound"); }
+                finally { current.Feedback = feedback; }
+                MaterialLcars.Feedback(preview, MaterialUiSoundCue.Preview);
+            }
+            finally { ImGui.EndDisabled(); }
+            if (uiSounds?.Error is not null) UiGui.TextWrapped("Audio output is unavailable.");
+        }
+        finally { ImGui.EndDisabled(); }
+        if (!LcarsActive) UiGui.TextDisabled("Select LCARS to use UI sounds.");
+        else if (AppearancePreferences.Current.UiLcarsSoundsMuted) UiGui.TextDisabled("Turn on UI sounds to preview.");
+    }
+
+    public void Dispose() { uiSounds?.Dispose(); shapedText.Dispose(); fonts?.Dispose(); text?.Dispose(); }
     internal void DrawLanguage(string id = "appearance")
     {
         var language = appliedLanguage;
@@ -205,6 +297,7 @@ internal sealed class PublicAppearance : IDisposable
         UiGui.TextUnformatted("Window appearance");
         DrawSelector("settingsAppearance");
         DrawCompact("Compact mode");
+        DrawLcarsSounds();
         var config = AppearancePreferences.Current;
         var changed = false;
         var compactVisibleOnMainWindow = config.UiCompactVisibleOnMainWindow;

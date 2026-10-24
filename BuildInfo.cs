@@ -2,5 +2,5 @@ namespace DDuck.PublicShell;
 
 internal static class BuildInfo
 {
-    public const string Version = "1.3.0.2";
+    public const string Version = "1.3.0.3";
 }

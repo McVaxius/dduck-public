@@ -82,6 +82,7 @@ internal sealed class IntroductionWindow : Window
     public override void Draw()
     {
         motion.DrawChrome();
+        if (MaterialTheme.Current.IsLcars) MaterialLcars.Header(string.Empty);
         var scale = ImGuiHelpers.GlobalScale;
         var compact = PublicPresentation.Compact;
         var iconMin = ImGui.GetCursorScreenPos();
@@ -217,7 +218,10 @@ internal sealed class IntroductionWindow : Window
     {
         ImGui.PushID(id);
         using (UiText.Font(PublicPresentation.Compact ? UiFontRole.CompactPaneHeading : UiFontRole.PaneHeading))
-            UiGui.TextColored(Accent, title);
+        {
+            if (MaterialTheme.Current.IsLcars) MaterialLcars.PanelHeading(UiText.T(title), 1);
+            else UiGui.TextColored(Accent, title);
+        }
         UiGui.TextWrapped(body);
         ImGui.Spacing();
         ImGui.PopID();

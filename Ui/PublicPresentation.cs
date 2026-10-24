@@ -76,6 +76,7 @@ internal static class PublicPresentation
 
     internal static void Surface(Vector2 min, Vector2 max)
     {
+        if (MaterialTheme.Current.IsLcars) { MaterialLcars.PanelFrame(min, max, 1); return; }
         var c = MaterialTheme.Current.Colors;
         MaterialCanvas.Surface(min, max, c.SurfaceContainerHigh, c.Surface, 4 * MaterialTheme.Metrics.Scale);
         ImGui.GetWindowDrawList().AddRect(min, max, MaterialCanvas.Color(c.OutlineVariant), 4 * MaterialTheme.Metrics.Scale);

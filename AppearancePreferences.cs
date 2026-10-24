@@ -4,6 +4,7 @@ namespace DDuck.PublicShell;
 public readonly record struct AppearanceValues(string Language, uint AccentRgb, bool Compact)
 {
     public AethertekUI.MaterialColorSettings UiColors { get; init; } = new();
+    public bool UiLcarsSoundsMuted { get; init; } = true;
     public bool UiCompactVisibleOnMainWindow { get; init; }
     public bool UiTransparencyVisibleOnMainWindow { get; init; }
     public bool UiLanguageVisibleOnMainWindow { get; init; } = true;
