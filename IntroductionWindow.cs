@@ -81,6 +81,7 @@ internal sealed class IntroductionWindow : Window
 
     public override void Draw()
     {
+        MaterialSkin.Backdrop();
         motion.DrawChrome();
         if (MaterialTheme.Current.IsLcars) MaterialLcars.Header(string.Empty);
         var scale = ImGuiHelpers.GlobalScale;
@@ -109,7 +110,7 @@ internal sealed class IntroductionWindow : Window
         }
         else
         {
-            Panel(() =>
+            PublicPresentation.Panel(() =>
             {
                 Card("About", "Deep Dungeon automation", "Deep Ducking provides Deep Dungeon automation through a separately supplied module. This public plugin provides the introduction and loads authenticated DDuck modules.");
                 ImGui.Separator();
@@ -117,11 +118,15 @@ internal sealed class IntroductionWindow : Window
                 DrawInstallation();
             });
             ImGui.Spacing();
-            Panel(() => Card("Access", "Join the community", "Visit The Dumpster Fire community on Discord for plugin discussion and to arrange access with McVaxius. Support on Ko-fi is welcome; module access is granted privately."));
+            PublicPresentation.Panel(() => Card("Access", "Join the community", "Visit The Dumpster Fire community on Discord for plugin discussion and to arrange access with McVaxius. Support on Ko-fi is welcome; module access is granted privately."));
             ImGui.Spacing();
-            Panel(() =>
+            PublicPresentation.Panel(() =>
             {
-                using (UiText.Font(UiFontRole.PaneHeading)) UiGui.TextUnformatted("COMMUNITY AND SUPPORT");
+                using (UiText.Font(UiFontRole.PaneHeading))
+                {
+                    if (MaterialTheme.Current.IsCyberpunk) MaterialSkin.Heading(UiText.T("COMMUNITY AND SUPPORT"), 1);
+                    else UiGui.TextUnformatted("COMMUNITY AND SUPPORT");
+                }
                 UiGui.TextDisabled("Get help, share feedback, or support the project.");
                 DrawSupportButtons(24 * scale);
             });
@@ -173,8 +178,11 @@ internal sealed class IntroductionWindow : Window
         var textWidth = Math.Max(1, informationWidth - padding * 2 - iconSize - 12 * scale);
         var height = Math.Max(68 * scale, MaterialText.Measure(text, false, textWidth).Y + padding * 2);
         var list = ImGui.GetWindowDrawList();
-        list.AddRectFilled(textOrigin, textOrigin + new Vector2(informationWidth, height),
-            MaterialCanvas.Color(MaterialTheme.Current.Colors.SurfaceContainerHigh), 6 * scale);
+        var theme = MaterialTheme.Current;
+        if (theme.IsLcars || theme.IsGlassmorphism || theme.IsSpatial || theme.IsCyberpunk)
+            MaterialSkin.PanelFrame(textOrigin, textOrigin + new Vector2(informationWidth, height), 1, inset: true);
+        else list.AddRectFilled(textOrigin, textOrigin + new Vector2(informationWidth, height),
+            MaterialCanvas.Color(theme.Colors.SurfaceContainerHigh), 6 * scale);
         MaterialIcons.Draw(MaterialIcon.Info, textOrigin + new Vector2(padding, (height - iconSize) * .5f),
             iconSize, MaterialTheme.Current.Colors.OnSurfaceVariant);
         MaterialText.AddText(list, ImGui.GetFont(), ImGui.GetFontSize(),
@@ -219,7 +227,7 @@ internal sealed class IntroductionWindow : Window
         ImGui.PushID(id);
         using (UiText.Font(PublicPresentation.Compact ? UiFontRole.CompactPaneHeading : UiFontRole.PaneHeading))
         {
-            if (MaterialTheme.Current.IsLcars) MaterialLcars.PanelHeading(UiText.T(title), 1);
+            if (MaterialTheme.Current.IsLcars || MaterialTheme.Current.IsCyberpunk) MaterialSkin.Heading(UiText.T(title), 1);
             else UiGui.TextColored(Accent, title);
         }
         UiGui.TextWrapped(body);
@@ -227,39 +235,4 @@ internal sealed class IntroductionWindow : Window
         ImGui.PopID();
     }
 
-    private static void Panel(Action draw)
-    {
-        // Presentation only: no child/table scope is introduced around the original actions.
-        var scale = ImGuiHelpers.GlobalScale; var padding = 24 * scale;
-        var owner = ImGuiP.GetCurrentWindow();
-        var origin = ImGui.GetCursorScreenPos();
-        var width = Math.Max(1, Math.Min(ImGui.GetContentRegionAvail().X, owner.InnerClipRect.Max.X - origin.X));
-        var savedWork = owner.WorkRect;
-        var savedContent = owner.ContentRegionRect;
-        var cursor = ImGui.GetCursorPos(); var list = ImGui.GetWindowDrawList();
-        list.ChannelsSplit(2); list.ChannelsSetCurrent(1);
-        ImGui.BeginGroup();
-        ImGui.SetCursorPos(cursor + new Vector2(0, padding));
-        ImGui.Indent(padding);
-        var work = savedWork;
-        work.Min.X = origin.X + padding;
-        work.Max.X = origin.X + width - padding;
-        owner.WorkRect = work;
-        var content = savedContent;
-        content.Min.X = work.Min.X;
-        content.Max.X = work.Max.X;
-        owner.ContentRegionRect = content;
-        ImGui.PushTextWrapPos(cursor.X + width - padding);
-        draw();
-        ImGui.PopTextWrapPos();
-        owner.WorkRect = savedWork;
-        owner.ContentRegionRect = savedContent;
-        ImGui.Dummy(new Vector2(Math.Max(1, width - padding * 2), padding));
-        ImGui.Unindent(padding);
-        ImGui.EndGroup();
-        var bottom = Math.Max(origin.Y + padding * 2, ImGui.GetItemRectMax().Y);
-        list.ChannelsSetCurrent(0);
-        PublicPresentation.Surface(origin, new Vector2(origin.X + width, bottom));
-        list.ChannelsMerge();
-    }
 }

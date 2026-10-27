@@ -31,7 +31,7 @@ internal static class UiGui
         BeginField(label, Math.Max(EditorWidth, MaterialText.Measure(text).X + ImGui.GetStyle().FramePadding.X * 2 + ImGui.GetFrameHeight()));
         using var height = MaterialText.PushLineHeight(text);
         bool open;
-        try { open = MaterialText.BeginCombo("", text); }
+        try { using var face = MaterialSkin.NativeFieldStyle(); open = MaterialText.BeginCombo("", text); }
         catch { ImGui.PopID(); throw; }
         if (!open) ImGui.PopID();
         return open;
@@ -39,19 +39,34 @@ internal static class UiGui
     internal static void EndCombo() { ImGui.EndCombo(); ImGui.PopID(); }
     internal static bool BeginTabItem(string label, ref bool open, ImGuiTabItemFlags flags)
     {
+        var material = MaterialTheme.Current.IsGlassmorphism || MaterialTheme.Current.IsSpatial || MaterialTheme.Current.IsCyberpunk;
+        var inactive = ImGui.GetStyle().Colors[(int)ImGuiCol.Tab];
         using var tabs = LcarsTabs();
-        using var height = MaterialText.PushLineHeight(UiText.T(label));
-        var style = ImGui.GetStyle(); var delta = MaterialText.Measure(UiText.T(label)).X - MaterialText.Measure(label).X;
-        var padding = new Vector2(48 * MaterialTheme.Metrics.Scale + Math.Max(0, delta * .5f), (PublicPresentation.Compact ? 10 : 14) * MaterialTheme.Metrics.Scale);
-        ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, padding);
-        ImGui.PushStyleColor(ImGuiCol.TabActive, MaterialTheme.Current.IsLcars ? MaterialLcars.Lilac : MaterialTheme.Current.Colors.Primary);
-        var selected = ImGui.BeginTabItem(label, ref open, flags); ImGui.PopStyleVar();
-        ImGui.PopStyleColor();
-        MaterialLcars.Feedback(ImGui.IsItemActivated());
-        var color = selected ? MaterialTheme.Current.IsLcars ? MaterialLcars.Lilac : MaterialTheme.Current.Colors.Primary : style.Colors[(int)(ImGui.IsItemHovered() ? ImGuiCol.TabHovered : ImGuiCol.Tab)];
-        Label(label, ImGui.GetItemRectMin() + padding, color,
-            selected ? MaterialTheme.Current.IsLcars ? MaterialLcars.Background : MaterialTheme.Current.Colors.OnPrimary : style.Colors[(int)ImGuiCol.Text], repaint: true);
-        return selected;
+        var list = ImGui.GetWindowDrawList(); var splitter = material ? ImGui.ImDrawListSplitter() : default;
+        if (material) { splitter.Split(list, 2); splitter.SetCurrentChannel(list, 1); }
+        try
+        {
+            using var height = MaterialText.PushLineHeight(UiText.T(label));
+            var style = ImGui.GetStyle(); var delta = MaterialText.Measure(UiText.T(label)).X - MaterialText.Measure(label).X;
+            var padding = new Vector2(48 * MaterialTheme.Metrics.Scale + Math.Max(0, delta * .5f), (PublicPresentation.Compact ? 10 : 14) * MaterialTheme.Metrics.Scale);
+            ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, padding);
+            if (!material) ImGui.PushStyleColor(ImGuiCol.TabActive, MaterialTheme.Current.IsLcars ? MaterialLcars.Lilac : MaterialTheme.Current.Colors.Primary);
+            var selected = ImGui.BeginTabItem(label, ref open, flags); ImGui.PopStyleVar();
+            if (!material) ImGui.PopStyleColor();
+            MaterialLcars.Feedback(ImGui.IsItemActivated());
+            var color = selected ? MaterialTheme.Current.IsLcars ? MaterialLcars.Lilac : MaterialTheme.Current.Colors.Primary : style.Colors[(int)(ImGui.IsItemHovered() ? ImGuiCol.TabHovered : ImGuiCol.Tab)];
+            Label(label, ImGui.GetItemRectMin() + padding, color,
+                selected ? MaterialTheme.Current.IsLcars ? MaterialLcars.Background : MaterialTheme.Current.Colors.OnPrimary : style.Colors[(int)ImGuiCol.Text], repaint: true);
+            if (material)
+            {
+                splitter.SetCurrentChannel(list, 0);
+                tabs.Color(ImGuiCol.Button, selected ? MaterialTheme.Current.Colors.Primary : inactive);
+                tabs.Color(ImGuiCol.ButtonActive, MaterialTheme.Current.Colors.Primary);
+                MaterialSkin.PaintButton(ImGui.GetItemRectMin(), ImGui.GetItemRectMax());
+            }
+            return selected;
+        }
+        finally { if (material) { splitter.Merge(list); splitter.Destroy(); } }
     }
     internal static bool Combo(string label, ref int index, string zeroSeparated)
     {
@@ -61,7 +76,8 @@ internal static class UiGui
     internal static bool DragFloat(string label, ref float value, float speed, float min, float max, string format)
     {
         BeginField(label, EditorWidth);
-        var changed = ImGui.DragFloat("", ref value, speed, min, max, format);
+        bool changed;
+        using (var face = MaterialSkin.NativeFieldStyle()) changed = ImGui.DragFloat("", ref value, speed, min, max, format);
         if (!ImGui.IsItemActive())
         {
             var rectMin = ImGui.GetItemRectMin();
@@ -86,22 +102,43 @@ internal static class UiGui
         using var selection = LcarsSelection(selected);
         var translated = display ?? UiText.T(raw.Split("##", 2)[0]);
         using var height = MaterialText.PushLineHeight(translated);
-        if (MaterialText.RequiresShaping(translated))
+        var material = MaterialTheme.Current.IsGlassmorphism || MaterialTheme.Current.IsSpatial || MaterialTheme.Current.IsCyberpunk;
+        var dl = ImGui.GetWindowDrawList();
+        var splitter = material ? ImGui.ImDrawListSplitter() : default;
+        if (material) { splitter.Split(dl, 2); splitter.SetCurrentChannel(dl, 1); }
+        try
         {
-            var activated = MaterialText.Selectable(raw, selected, size: new Vector2(Math.Max(ImGui.GetContentRegionAvail().X, MaterialText.Measure(translated).X), MaterialText.Measure(translated).Y), display: translated);
-            MaterialLcars.Feedback(activated);
-            return activated;
+            bool clicked;
+            if (MaterialText.RequiresShaping(translated))
+                clicked = MaterialText.Selectable(raw, selected, size: new Vector2(Math.Max(ImGui.GetContentRegionAvail().X, MaterialText.Measure(translated).X), MaterialText.Measure(translated).Y), display: translated);
+            else
+            {
+                ImGui.PushStyleColor(ImGuiCol.Text, Vector4.Zero);
+                clicked = ImGui.Selectable(raw, selected, ImGuiSelectableFlags.None, new Vector2(Math.Max(ImGui.GetContentRegionAvail().X, MaterialText.Measure(translated).X), 0));
+                ImGui.PopStyleColor();
+                var min = ImGui.GetItemRectMin(); var max = ImGui.GetItemRectMax();
+                dl.PushClipRect(min, max, true); MaterialText.AddText(dl, min, MaterialCanvas.Color(ImGui.GetStyle().Colors[(int)ImGuiCol.Text]), translated); dl.PopClipRect();
+            }
+            if (material) { splitter.SetCurrentChannel(dl, 0); MaterialSkin.PaintButton(ImGui.GetItemRectMin(), ImGui.GetItemRectMax()); }
+            MaterialLcars.Feedback(clicked); return clicked;
         }
-        ImGui.PushStyleColor(ImGuiCol.Text, Vector4.Zero);
-        var clicked = ImGui.Selectable(raw, selected, ImGuiSelectableFlags.None, new Vector2(Math.Max(ImGui.GetContentRegionAvail().X, MaterialText.Measure(translated).X), MaterialText.RequiresShaping(translated) ? MaterialText.Measure(translated).Y : 0));
-        ImGui.PopStyleColor();
-        var min = ImGui.GetItemRectMin(); var max = ImGui.GetItemRectMax(); var dl = ImGui.GetWindowDrawList();
-        dl.PushClipRect(min, max, true); MaterialText.AddText(dl, min, MaterialCanvas.Color(ImGui.GetStyle().Colors[(int)ImGuiCol.Text]), translated); dl.PopClipRect();
-        MaterialLcars.Feedback(clicked); return clicked;
+        finally { if (material) { splitter.Merge(dl); splitter.Destroy(); } }
     }
     private static MaterialStyleScope LcarsSelection(bool selected)
     {
-        var style = new MaterialStyleScope();
+        var material = MaterialTheme.Current.IsGlassmorphism || MaterialTheme.Current.IsSpatial || MaterialTheme.Current.IsCyberpunk;
+        var style = material ? MaterialSkin.NativeButtonStyle() : new MaterialStyleScope();
+        if (material)
+        {
+            var colors = ImGui.GetStyle().Colors;
+            style.Color(ImGuiCol.Button, selected ? colors[(int)ImGuiCol.Header] : Vector4.Zero);
+            style.Color(ImGuiCol.ButtonHovered, colors[(int)ImGuiCol.HeaderHovered]);
+            style.Color(ImGuiCol.ButtonActive, colors[(int)ImGuiCol.HeaderActive]);
+            style.Color(ImGuiCol.Header, Vector4.Zero);
+            style.Color(ImGuiCol.HeaderHovered, Vector4.Zero);
+            style.Color(ImGuiCol.HeaderActive, Vector4.Zero);
+            return style;
+        }
         if (!MaterialTheme.Current.IsLcars) return style;
         style.Color(ImGuiCol.Header, MaterialLcars.Lilac);
         style.Color(ImGuiCol.HeaderHovered, selected ? MaterialLcars.Periwinkle : MaterialColor.Layer(MaterialLcars.Background, MaterialLcars.Lilac, .18f));
@@ -112,7 +149,21 @@ internal static class UiGui
 
     private static MaterialStyleScope LcarsTabs()
     {
-        var style = new MaterialStyleScope();
+        var material = MaterialTheme.Current.IsGlassmorphism || MaterialTheme.Current.IsSpatial || MaterialTheme.Current.IsCyberpunk;
+        var style = material ? MaterialSkin.NativeButtonStyle() : new MaterialStyleScope();
+        if (material)
+        {
+            var colors = ImGui.GetStyle().Colors;
+            style.Color(ImGuiCol.Button, colors[(int)ImGuiCol.Tab]);
+            style.Color(ImGuiCol.ButtonHovered, colors[(int)ImGuiCol.TabHovered]);
+            style.Color(ImGuiCol.ButtonActive, colors[(int)ImGuiCol.TabActive]);
+            style.Color(ImGuiCol.Tab, Vector4.Zero);
+            style.Color(ImGuiCol.TabHovered, Vector4.Zero);
+            style.Color(ImGuiCol.TabActive, Vector4.Zero);
+            style.Color(ImGuiCol.TabUnfocused, Vector4.Zero);
+            style.Color(ImGuiCol.TabUnfocusedActive, Vector4.Zero);
+            return style;
+        }
         if (!MaterialTheme.Current.IsLcars) return style;
         style.Color(ImGuiCol.TabActive, MaterialLcars.Lilac);
         style.Color(ImGuiCol.TabUnfocusedActive, MaterialLcars.Lilac);
@@ -138,7 +189,7 @@ internal static class UiGui
     {
         BeginField(label, EditorWidth);
         using var height = MaterialText.PushLineHeight(value);
-        try { return MaterialShapedInput.SingleLine("", string.Empty, ref value, length, flags); } finally { ImGui.PopID(); }
+        try { using var face = MaterialSkin.NativeFieldStyle(); return MaterialShapedInput.SingleLine("", string.Empty, ref value, length, flags); } finally { ImGui.PopID(); }
     }
     internal static bool RadioButton(string label,bool active)
     {
@@ -191,6 +242,14 @@ internal static class UiGui
         if(translated==visible && !repaint) return;
         var dl=drawList ?? ImGui.GetWindowDrawList();
         var width=Math.Max(MaterialText.Measure(visible).X,MaterialText.Measure(translated).X);
+        if (MaterialTheme.Current.IsGlassmorphism || MaterialTheme.Current.IsSpatial || MaterialTheme.Current.IsCyberpunk)
+        {
+            foreground.W *= ImGui.GetStyle().Alpha;
+            MaterialText.ReplaceNativeCaption(dl, 0, ImGui.GetFont(), original,
+                clipMin ?? position, clip ?? position + new Vector2(width, Math.Max(ImGui.GetTextLineHeight(), MaterialText.Measure(translated).Y)),
+                position, translated, ImGui.ColorConvertFloat4ToU32(foreground));
+            return;
+        }
         if(clip is { } max) dl.PushClipRect(clipMin ?? position,max,true);
         dl.AddRectFilled(position,position+new Vector2(width,Math.Max(ImGui.GetTextLineHeight(),MaterialText.Measure(translated).Y)),ImGui.ColorConvertFloat4ToU32(background));
         foreground.W*=ImGui.GetStyle().Alpha;
@@ -201,9 +260,9 @@ internal static class UiGui
     {
         var translated=display ?? UiText.T(label.Split("##",2)[0]);
         var toolbar = MaterialControls.Context != MaterialControlContext.Dense && ImGui.GetStyle().FramePadding.Y > 0;
-        using var height = MaterialText.PushLineHeight(translated);
         using var controls = toolbar ? MaterialControls.Push(MaterialControlContext.Toolbar) : default;
-        using var outline = MaterialLcars.NativeButtonStyle();
+        using var height = MaterialText.PushLineHeight(translated);
+        using var outline = MaterialSkin.NativeButtonStyle();
         var buttonHeight = toolbar
             ? MaterialControlMetrics.Measure(MaterialTheme.Metrics, Math.Max(ImGui.GetTextLineHeight(), MaterialText.Measure(translated).Y), MaterialControlContext.Toolbar).Height
             : ImGui.GetFrameHeight();
@@ -211,9 +270,12 @@ internal static class UiGui
         width = MaterialLayout.FitNextItemWidth(width, MathF.Ceiling(width));
         var foreground=ImGui.GetStyle().Colors[(int)ImGuiCol.Text];
         ImGui.PushStyleColor(ImGuiCol.Text,Vector4.Zero);
-        var clicked=ImGui.Button(label,new Vector2(width,buttonHeight));
+        bool clicked;
+        using (var face = MaterialTheme.Current.IsLcars ? default : MaterialSkin.TransparentButtonFace())
+            clicked=ImGui.Button(label,new Vector2(width,buttonHeight));
         ImGui.PopStyleColor();
         var min=ImGui.GetItemRectMin(); var max=ImGui.GetItemRectMax();
+        if (!MaterialTheme.Current.IsLcars) MaterialSkin.PaintButton(min, max);
         foreground.W*=ImGui.GetStyle().Alpha;
         ImGui.GetWindowDrawList().PushClipRect(min,max,true);
         MaterialText.AddText(ImGui.GetWindowDrawList(), min+(max-min-MaterialText.Measure(translated))*.5f,ImGui.ColorConvertFloat4ToU32(foreground),translated);
@@ -225,19 +287,22 @@ internal static class UiGui
     {
         var translated = display ?? UiText.T(label.Split("##", 2)[0]);
         var toolbar = pixels.Y <= 0 && MaterialControls.Context != MaterialControlContext.Dense && ImGui.GetStyle().FramePadding.Y > 0;
-        using var height = MaterialText.PushLineHeight(translated);
         using var controls = toolbar ? MaterialControls.Push(MaterialControlContext.Toolbar) : default;
-        using var outline = MaterialLcars.NativeButtonStyle();
+        using var height = MaterialText.PushLineHeight(translated);
+        using var outline = MaterialSkin.NativeButtonStyle();
         var buttonHeight = toolbar
             ? MaterialControlMetrics.Measure(MaterialTheme.Metrics, Math.Max(ImGui.GetTextLineHeight(), MaterialText.Measure(translated).Y), MaterialControlContext.Toolbar).Height
             : ImGui.GetFrameHeight();
         pixels.X = MaterialLayout.FitNextItemWidth(pixels.X, MathF.Ceiling(MaterialText.Measure(translated).X + ImGui.GetStyle().FramePadding.X * 2));
         var color = ImGui.GetStyle().Colors[(int)ImGuiCol.Text];
         ImGui.PushStyleColor(ImGuiCol.Text, Vector4.Zero);
-        var clicked = ImGui.Button(label, new Vector2(pixels.X, Math.Max(pixels.Y, buttonHeight)));
+        bool clicked;
+        using (var face = MaterialTheme.Current.IsLcars ? default : MaterialSkin.TransparentButtonFace())
+            clicked = ImGui.Button(label, new Vector2(pixels.X, Math.Max(pixels.Y, buttonHeight)));
         ImGui.PopStyleColor();
         color.W *= ImGui.GetStyle().Alpha;
         var min = ImGui.GetItemRectMin(); var max = ImGui.GetItemRectMax();
+        if (!MaterialTheme.Current.IsLcars) MaterialSkin.PaintButton(min, max);
         var dl = ImGui.GetWindowDrawList();
         dl.PushClipRect(min, max, true);
         MaterialText.AddText(dl, min + (max - min - MaterialText.Measure(translated)) * .5f, MaterialCanvas.Color(color), translated);
@@ -363,7 +428,7 @@ internal static class UiGui
         BeginField(label, Math.Max(EditorWidth, MaterialText.Measure(text).X + ImGui.GetStyle().FramePadding.X * 2 + ImGui.GetFrameHeight()));
         using var height = MaterialText.PushLineHeight(text);
         bool open;
-        try { open = MaterialText.BeginCombo("", text, flags); }
+        try { using var face = MaterialSkin.NativeFieldStyle(); open = MaterialText.BeginCombo("", text, flags); }
         catch { ImGui.PopID(); throw; }
         if (!open) ImGui.PopID();
         return open;
@@ -373,25 +438,35 @@ internal static class UiGui
         using var selection = LcarsSelection(selected);
         var text = UiText.T(raw.Split("##", 2)[0]);
         using var height = MaterialText.PushLineHeight(text);
-        ImGui.PushStyleColor(ImGuiCol.Text, Vector4.Zero);
-        var clicked = ImGui.Selectable(raw, selected, flags, new Vector2(Math.Max(size.X, MaterialText.Measure(text).X), MaterialText.RequiresShaping(text) ? Math.Max(size.Y, MaterialText.Measure(text).Y) : size.Y));
-        ImGui.PopStyleColor();
-        var min = ImGui.GetItemRectMin(); var max = ImGui.GetItemRectMax(); var list = ImGui.GetWindowDrawList();
-        list.PushClipRect(min, max, true);
-        MaterialText.AddText(list, min + new Vector2(8 * MaterialTheme.Metrics.Scale, (max.Y - min.Y - MaterialText.Measure(text).Y) * .5f), MaterialCanvas.Color(ImGui.GetStyle().Colors[(int)ImGuiCol.Text]), text);
-        list.PopClipRect(); MaterialLcars.Feedback(clicked); return clicked;
+        var material = MaterialTheme.Current.IsGlassmorphism || MaterialTheme.Current.IsSpatial || MaterialTheme.Current.IsCyberpunk;
+        var list = ImGui.GetWindowDrawList();
+        var splitter = material ? ImGui.ImDrawListSplitter() : default;
+        if (material) { splitter.Split(list, 2); splitter.SetCurrentChannel(list, 1); }
+        try
+        {
+            ImGui.PushStyleColor(ImGuiCol.Text, Vector4.Zero);
+            var clicked = ImGui.Selectable(raw, selected, flags, new Vector2(Math.Max(size.X, MaterialText.Measure(text).X), MaterialText.RequiresShaping(text) ? Math.Max(size.Y, MaterialText.Measure(text).Y) : size.Y));
+            ImGui.PopStyleColor();
+            var min = ImGui.GetItemRectMin(); var max = ImGui.GetItemRectMax();
+            list.PushClipRect(min, max, true);
+            MaterialText.AddText(list, min + new Vector2(8 * MaterialTheme.Metrics.Scale, (max.Y - min.Y - MaterialText.Measure(text).Y) * .5f), MaterialCanvas.Color(ImGui.GetStyle().Colors[(int)ImGuiCol.Text]), text);
+            list.PopClipRect();
+            if (material) { splitter.SetCurrentChannel(list, 0); MaterialSkin.PaintButton(min, max); }
+            MaterialLcars.Feedback(clicked); return clicked;
+        }
+        finally { if (material) { splitter.Merge(list); splitter.Destroy(); } }
     }
     internal static bool InputInt(string label, ref int value, int step = 0, int stepFast = 0)
     {
         BeginField(label, EditorWidth + (step > 0 ? 2 * (ImGui.GetFrameHeight() + ImGui.GetStyle().ItemInnerSpacing.X) : 0));
-        try { return ImGui.InputInt("", ref value, step, stepFast); } finally { ImGui.PopID(); }
+        try { using var face = step == 0 ? MaterialSkin.NativeFieldStyle() : default; return ImGui.InputInt("", ref value, step, stepFast); } finally { ImGui.PopID(); }
     }
     internal static bool SliderInt(string label, ref int value, int min, int max, string format = "%d", ImGuiSliderFlags flags = ImGuiSliderFlags.None)
-    { BeginField(label, EditorWidth); try { return ImGui.SliderInt("", ref value, min, max, format, flags); } finally { ImGui.PopID(); } }
+    { BeginField(label, EditorWidth); try { using var face = MaterialSkin.NativeFieldStyle(); return ImGui.SliderInt("", ref value, min, max, format, flags); } finally { ImGui.PopID(); } }
     internal static bool InputFloat(string label, ref float value)
-    { BeginField(label, EditorWidth); try { return ImGui.InputFloat("", ref value); } finally { ImGui.PopID(); } }
+    { BeginField(label, EditorWidth); try { using var face = MaterialSkin.NativeFieldStyle(); return ImGui.InputFloat("", ref value); } finally { ImGui.PopID(); } }
     internal static bool SliderFloat(string label, ref float value, float min, float max, string format = "%.3f")
-    { BeginField(label, EditorWidth); try { return ImGui.SliderFloat("", ref value, min, max, format); } finally { ImGui.PopID(); } }
+    { BeginField(label, EditorWidth); try { using var face = MaterialSkin.NativeFieldStyle(); return ImGui.SliderFloat("", ref value, min, max, format); } finally { ImGui.PopID(); } }
     internal static bool InputTextMultiline(string label, ref string value, int length, Vector2 size)
     {
         var visible = label.Split("##", 2)[0];
@@ -406,16 +481,43 @@ internal static class UiGui
         var text = UiText.T(hint);
         BeginField(id, Math.Max(EditorWidth, MaterialText.Measure(text).X + ImGui.GetStyle().FramePadding.X * 2));
         using var height = MaterialText.PushLineHeight(value, text);
-        try { return MaterialShapedInput.SingleLine("", text, ref value, length); } finally { ImGui.PopID(); }
+        try { using var face = MaterialSkin.NativeFieldStyle(); return MaterialShapedInput.SingleLine("", text, ref value, length); } finally { ImGui.PopID(); }
     }
     internal static bool CollapsingHeader(string label, ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.None)
     {
         var display = UiText.T(label.Split("##",2)[0]);
-        if (MaterialText.RequiresShaping(display)) return MaterialText.TreeNode(label, flags | ImGuiTreeNodeFlags.Framed | ImGuiTreeNodeFlags.NoTreePushOnOpen | ImGuiTreeNodeFlags.NoAutoOpenOnLog, display);
-        var open = ImGui.CollapsingHeader(label, flags); TreeLabel(label); return open;
+        var material = MaterialTheme.Current.IsGlassmorphism || MaterialTheme.Current.IsSpatial || MaterialTheme.Current.IsCyberpunk;
+        using var face = material ? LcarsSelection(true) : default;
+        var list = ImGui.GetWindowDrawList(); var splitter = material ? ImGui.ImDrawListSplitter() : default;
+        if (material) { splitter.Split(list, 2); splitter.SetCurrentChannel(list, 1); }
+        try
+        {
+            var shaped = MaterialText.RequiresShaping(display);
+            var open = shaped ? MaterialText.TreeNode(label, flags | ImGuiTreeNodeFlags.Framed | ImGuiTreeNodeFlags.NoTreePushOnOpen | ImGuiTreeNodeFlags.NoAutoOpenOnLog, display)
+                : ImGui.CollapsingHeader(label, flags);
+            if (!shaped) TreeLabel(label);
+            if (material) { splitter.SetCurrentChannel(list, 0); MaterialSkin.PaintButton(ImGui.GetItemRectMin(), ImGui.GetItemRectMax()); }
+            return open;
+        }
+        finally { if (material) { splitter.Merge(list); splitter.Destroy(); } }
     }
     internal static bool TreeNode(string label)
-    { var display = UiText.T(label.Split("##",2)[0]); if (MaterialText.RequiresShaping(display)) return MaterialText.TreeNode(label, display: display); var open = ImGui.TreeNode(label); TreeLabel(label); return open; }
+    {
+        var display = UiText.T(label.Split("##",2)[0]);
+        var material = MaterialTheme.Current.IsGlassmorphism || MaterialTheme.Current.IsSpatial || MaterialTheme.Current.IsCyberpunk;
+        using var face = material ? LcarsSelection(false) : default;
+        var list = ImGui.GetWindowDrawList(); var splitter = material ? ImGui.ImDrawListSplitter() : default;
+        if (material) { splitter.Split(list, 2); splitter.SetCurrentChannel(list, 1); }
+        try
+        {
+            var shaped = MaterialText.RequiresShaping(display);
+            var open = shaped ? MaterialText.TreeNode(label, display: display) : ImGui.TreeNode(label);
+            if (!shaped) TreeLabel(label);
+            if (material) { splitter.SetCurrentChannel(list, 0); MaterialSkin.PaintButton(ImGui.GetItemRectMin(), ImGui.GetItemRectMax()); }
+            return open;
+        }
+        finally { if (material) { splitter.Merge(list); splitter.Destroy(); } }
+    }
     private static void TreeLabel(string label, string? display = null)
     {
         var position = ImGui.GetItemRectMin() + new Vector2(ImGui.GetTreeNodeToLabelSpacing(), ImGui.GetStyle().FramePadding.Y);
@@ -425,22 +527,36 @@ internal static class UiGui
     }
     internal static bool BeginTabItem(string label, ImGuiTabItemFlags flags = ImGuiTabItemFlags.None)
     {
+        var material = MaterialTheme.Current.IsGlassmorphism || MaterialTheme.Current.IsSpatial || MaterialTheme.Current.IsCyberpunk;
+        var active = ImGui.GetStyle().Colors[(int)ImGuiCol.TabActive];
         using var tabs = LcarsTabs();
-        using var height = MaterialText.PushLineHeight(UiText.T(label));
-        var style = ImGui.GetStyle();
-        var display = UiText.T(label);
-        var shaped = MaterialText.RequiresShaping(display);
-        var delta = shaped ? 0 : Math.Max(0, MaterialText.Measure(display).X - MaterialText.Measure(label).X);
-        var padding = style.FramePadding + new Vector2(delta * .5f, 0);
-        ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, padding);
-        if (shaped && ((int)ImGui.GetCurrentContext().NextItemData.Flags & 1) == 0)
-            ImGui.SetNextItemWidth(Math.Max(ImGui.CalcTextSize(label, true).X, MaterialText.Measure(display).X) + 2 * padding.X);
-        var open = ImGui.BeginTabItem(label, flags); ImGui.PopStyleVar();
-        MaterialLcars.Feedback(ImGui.IsItemActivated());
-        var bg = style.Colors[(int)(ImGui.IsItemHovered() ? ImGuiCol.TabHovered : open ? ImGuiCol.TabActive : ImGuiCol.Tab)];
-        try { Label(label, ImGui.GetItemRectMin() + new Vector2(padding.X, (ImGui.GetItemRectSize().Y - MaterialText.Measure(UiText.T(label)).Y) * .5f), bg, MaterialTheme.Current.IsLcars && (open || ImGui.IsItemHovered()) ? MaterialLcars.Background : style.Colors[(int)ImGuiCol.Text], repaint: MaterialTheme.Current.IsLcars, clip: ImGui.GetItemRectMax(), clipMin: shaped ? ImGui.GetItemRectMin() : null); }
-        catch { if (open) ImGui.EndTabItem(); throw; }
-        return open;
+        var list = ImGui.GetWindowDrawList(); var splitter = material ? ImGui.ImDrawListSplitter() : default;
+        if (material) { splitter.Split(list, 2); splitter.SetCurrentChannel(list, 1); }
+        try
+        {
+            using var height = MaterialText.PushLineHeight(UiText.T(label));
+            var style = ImGui.GetStyle();
+            var display = UiText.T(label);
+            var shaped = MaterialText.RequiresShaping(display);
+            var delta = shaped ? 0 : Math.Max(0, MaterialText.Measure(display).X - MaterialText.Measure(label).X);
+            var padding = style.FramePadding + new Vector2(delta * .5f, 0);
+            ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, padding);
+            if (shaped && ((int)ImGui.GetCurrentContext().NextItemData.Flags & 1) == 0)
+                ImGui.SetNextItemWidth(Math.Max(ImGui.CalcTextSize(label, true).X, MaterialText.Measure(display).X) + 2 * padding.X);
+            var open = ImGui.BeginTabItem(label, flags); ImGui.PopStyleVar();
+            MaterialLcars.Feedback(ImGui.IsItemActivated());
+            var bg = style.Colors[(int)(ImGui.IsItemHovered() ? ImGuiCol.TabHovered : open ? ImGuiCol.TabActive : ImGuiCol.Tab)];
+            try { Label(label, ImGui.GetItemRectMin() + new Vector2(padding.X, (ImGui.GetItemRectSize().Y - MaterialText.Measure(UiText.T(label)).Y) * .5f), bg, MaterialTheme.Current.IsLcars && (open || ImGui.IsItemHovered()) ? MaterialLcars.Background : style.Colors[(int)ImGuiCol.Text], repaint: MaterialTheme.Current.IsLcars, clip: ImGui.GetItemRectMax(), clipMin: shaped ? ImGui.GetItemRectMin() : null); }
+            catch { if (open) ImGui.EndTabItem(); throw; }
+            if (material)
+            {
+                splitter.SetCurrentChannel(list, 0);
+                if (open) tabs.Color(ImGuiCol.Button, active);
+                MaterialSkin.PaintButton(ImGui.GetItemRectMin(), ImGui.GetItemRectMax());
+            }
+            return open;
+        }
+        finally { if (material) { splitter.Merge(list); splitter.Destroy(); } }
     }
     internal static void TableSetupColumn(string label, ImGuiTableColumnFlags flags = ImGuiTableColumnFlags.None, float width = 0)
         => ImGui.TableSetupColumn(label, flags, width);
@@ -473,9 +589,40 @@ internal static class UiGui
     internal static bool FCheckbox(FormattableString label, ref bool value)
     { return Checkbox(label.ToString(), ref value, UiText.Interpolated(label).Split("##", 2)[0]); }
     internal static bool FCollapsingHeader(FormattableString label)
-    { var raw = label.ToString(); var display = UiText.Interpolated(label).Split("##",2)[0]; if (MaterialText.RequiresShaping(display)) return MaterialText.TreeNode(raw, ImGuiTreeNodeFlags.Framed | ImGuiTreeNodeFlags.NoTreePushOnOpen | ImGuiTreeNodeFlags.NoAutoOpenOnLog, display); var open = ImGui.CollapsingHeader(raw); TreeLabel(raw, UiText.Interpolated(label).Split("##", 2)[0]); return open; }
+    {
+        var raw = label.ToString(); var display = UiText.Interpolated(label).Split("##",2)[0];
+        var material = MaterialTheme.Current.IsGlassmorphism || MaterialTheme.Current.IsSpatial || MaterialTheme.Current.IsCyberpunk;
+        using var face = material ? LcarsSelection(true) : default;
+        var list = ImGui.GetWindowDrawList(); var splitter = material ? ImGui.ImDrawListSplitter() : default;
+        if (material) { splitter.Split(list, 2); splitter.SetCurrentChannel(list, 1); }
+        try
+        {
+            var shaped = MaterialText.RequiresShaping(display);
+            var open = shaped ? MaterialText.TreeNode(raw, ImGuiTreeNodeFlags.Framed | ImGuiTreeNodeFlags.NoTreePushOnOpen | ImGuiTreeNodeFlags.NoAutoOpenOnLog, display)
+                : ImGui.CollapsingHeader(raw);
+            if (!shaped) TreeLabel(raw, display);
+            if (material) { splitter.SetCurrentChannel(list, 0); MaterialSkin.PaintButton(ImGui.GetItemRectMin(), ImGui.GetItemRectMax()); }
+            return open;
+        }
+        finally { if (material) { splitter.Merge(list); splitter.Destroy(); } }
+    }
     internal static bool FTreeNode(FormattableString label)
-    { var raw = label.ToString(); var display = UiText.Interpolated(label).Split("##",2)[0]; if (MaterialText.RequiresShaping(display)) return MaterialText.TreeNode(raw, display: display); var open = ImGui.TreeNode(raw); TreeLabel(raw, UiText.Interpolated(label).Split("##", 2)[0]); return open; }
+    {
+        var raw = label.ToString(); var display = UiText.Interpolated(label).Split("##",2)[0];
+        var material = MaterialTheme.Current.IsGlassmorphism || MaterialTheme.Current.IsSpatial || MaterialTheme.Current.IsCyberpunk;
+        using var face = material ? LcarsSelection(false) : default;
+        var list = ImGui.GetWindowDrawList(); var splitter = material ? ImGui.ImDrawListSplitter() : default;
+        if (material) { splitter.Split(list, 2); splitter.SetCurrentChannel(list, 1); }
+        try
+        {
+            var shaped = MaterialText.RequiresShaping(display);
+            var open = shaped ? MaterialText.TreeNode(raw, display: display) : ImGui.TreeNode(raw);
+            if (!shaped) TreeLabel(raw, display);
+            if (material) { splitter.SetCurrentChannel(list, 0); MaterialSkin.PaintButton(ImGui.GetItemRectMin(), ImGui.GetItemRectMax()); }
+            return open;
+        }
+        finally { if (material) { splitter.Merge(list); splitter.Destroy(); } }
+    }
 
     internal static bool Tile(string raw, string title, string? description, MaterialIcon icon, Vector2 pixels, bool centered = false)
     {
@@ -486,10 +633,14 @@ internal static class UiGui
         pixels.X = MaterialLayout.FitNextItemWidth(pixels.X, MathF.Ceiling(Math.Max(measuredTitle.X, measuredDetail.X) + 68 * scale));
         pixels.Y = Math.Max(pixels.Y, measuredTitle.Y + measuredDetail.Y + (description is null ? 8 : 28) * scale);
         var foreground = ImGui.GetStyle().Colors[(int)ImGuiCol.Text];
+        using var native = MaterialTheme.Current.IsLcars ? default : MaterialSkin.NativeButtonStyle();
         ImGui.PushStyleColor(ImGuiCol.Text, Vector4.Zero);
-        var clicked = ImGui.Button(raw, pixels);
+        bool clicked;
+        using (var face = MaterialTheme.Current.IsLcars ? default : MaterialSkin.TransparentButtonFace())
+            clicked = ImGui.Button(raw, pixels);
         ImGui.PopStyleColor();
         var min = ImGui.GetItemRectMin(); var max = ImGui.GetItemRectMax(); var dl = ImGui.GetWindowDrawList();
+        if (!MaterialTheme.Current.IsLcars) MaterialSkin.PaintButton(min, max);
         dl.PushClipRect(min, max, true);
         var iconSize = Math.Min(28 * scale, Math.Max(0, (max.X - min.X) * .18f));
         var groupWidth = Math.Max(measuredTitle.X, measuredDetail.X) + iconSize + 12 * scale;
@@ -502,7 +653,8 @@ internal static class UiGui
         MaterialIcons.Draw(icon, new Vector2(iconLeft, min.Y + (max.Y - min.Y - iconSize) * .5f), iconSize, foreground);
         MaterialText.AddText(dl, ImGui.GetFont(), ImGui.GetFontSize(), new Vector2(left, top), MaterialCanvas.Color(foreground), title);
         if (description is not null) MaterialText.AddText(dl, ImGui.GetFont(), ImGui.GetFontSize(), new Vector2(left, top + titleSize.Y + 4 * scale), MaterialCanvas.Color(foreground), description);
-        if (ImGui.IsItemFocused()) dl.AddRect(min, max, MaterialCanvas.Color(MaterialTheme.Current.Colors.Primary), 4 * scale, ImDrawFlags.None, 2 * scale);
+        if (!MaterialTheme.Current.IsGlassmorphism && !MaterialTheme.Current.IsSpatial && !MaterialTheme.Current.IsCyberpunk && ImGui.IsItemFocused())
+            dl.AddRect(min, max, MaterialCanvas.Color(MaterialTheme.Current.Colors.Primary), 4 * scale, ImDrawFlags.None, 2 * scale);
         dl.PopClipRect();
         MaterialLcars.Feedback(clicked);
         return clicked;

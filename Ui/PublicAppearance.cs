@@ -108,18 +108,21 @@ internal sealed class PublicAppearance : IDisposable
             using var fontTheme = MaterialTheme.Push(theme, ImGuiHelpers.GlobalScale, MaterialStyleMode.ColorsOnly);
             using var fontChrome = MaterialWindowChrome.Push();
             fontStatusFold.PreDraw("Deep Ducking##PublicFontStatus", null, null, false, prepareFontStatusDecorations);
-            var visible = ImGui.Begin("Deep Ducking##PublicFontStatus", ImGuiWindowFlags.AlwaysAutoResize);
+            bool visible;
+            using (MaterialSkin.BackdropStyle())
+                visible = ImGui.Begin("Deep Ducking##PublicFontStatus", ImGuiWindowFlags.AlwaysAutoResize);
             try
             {
                 if (visible)
                 {
+                    MaterialSkin.Backdrop();
                     fontStatusDecorations.Paint();
                     if (theme.IsLcars) MaterialLcars.Header("Deep Ducking");
                     var failed = fonts.LoadException is not null || fontIssueLogged;
                     MaterialText.TextWrapped(appliedLanguage == "hi"
                         ? failed ? "Hindi is unavailable. Use English to recover; your saved language is unchanged." : "Loading UI fonts..."
                         : UiText.T(failed ? "UI fonts failed to load. See the plugin log." : "Loading UI fonts..."));
-                    if (appliedLanguage == "hi" && failed && ImGui.Button("Use English"))
+                    if (appliedLanguage == "hi" && failed && UiGui.Button("Use English", display: "Use English"))
                         AppearancePreferences.Save(AppearancePreferences.Current with { Language = "en" });
                 }
             }
@@ -150,7 +153,7 @@ internal sealed class PublicAppearance : IDisposable
         using var body = fonts.Push(UiFontRole.Body);
         using var chrome = MaterialWindowChrome.Push();
         PrepareTitleBars();
-        windows.Draw();
+        using (MaterialSkin.BackdropStyle()) windows.Draw();
     }
 
     internal MaterialAppearanceTitleBar RegisterTitleBar(Window owner)
@@ -200,7 +203,16 @@ internal sealed class PublicAppearance : IDisposable
                 UiText.T("Theme colour"), UiText.T("Choose each colour independently."), UiText.T("Background"), UiText.T("Controls"),
                 UiText.T("Text"), UiText.T("Aa  Preview text"), UiText.T("Control"),
                 UiText.T("Switch to Picker to set each colour yourself."), UiText.T("Switch back to Auto to use the automatic theme."))
-            { Lcars = UiText.T("LCARS"), LcarsHelp = UiText.T("LCARS panels, bars and controls") },
+            {
+                Lcars = UiText.T("LCARS"), LcarsHelp = UiText.T("LCARS panels, bars and controls"),
+                Glassmorphism = UiText.T("Glassmorphism"), Spatial = UiText.T("Spatial"), Cyberpunk = UiText.T("Cyberpunk"),
+                LcarsBar1 = UiText.T("LCARS bar 1"), LcarsBar2 = UiText.T("LCARS bar 2"), LcarsBar3 = UiText.T("LCARS bar 3"),
+                Reset = UiText.T("Appearance reset"), ResetColors = UiText.T("Reset colours"),
+                Animation = UiText.T("Animation"), AnimationSpeed = UiText.T("Animation speed (0.1–10x; default 1x)"),
+                WaveColors = UiText.T("Wave colours"), GlassWave1 = UiText.T("Wave colour 1"),
+                GlassWave2 = UiText.T("Wave colour 2"), GlassWave3 = UiText.T("Wave colour 3"),
+                ResetWaveColors = UiText.T("Reset wave colours"),
+            }, new MaterialColorSettings(), MaterialColorSettings.Rgb(PublicPresentation.ReferenceAccent),
             AppearancePreferences.Current.Compact ? 298 : 316))
         {
             AppearancePreferences.Save(AppearancePreferences.Current with { UiColors = colorDraft, AccentRgb = MaterialColorSettings.ToRgb(accentDraft) });
@@ -295,43 +307,100 @@ internal sealed class PublicAppearance : IDisposable
     internal void DrawWindowAppearance()
     {
         UiGui.TextUnformatted("Window appearance");
-        DrawSelector("settingsAppearance");
-        DrawCompact("Compact mode");
-        DrawLcarsSounds();
         var config = AppearancePreferences.Current;
         var changed = false;
         var compactVisibleOnMainWindow = config.UiCompactVisibleOnMainWindow;
-        if (UiGui.Checkbox(UiText.T("Compact visible on main window") + "###UiCompactVisibleOnMainWindowSettings", ref compactVisibleOnMainWindow))
-        { changed = true; }
         var transparencyVisibleOnMainWindow = config.UiTransparencyVisibleOnMainWindow;
-        if (UiGui.Checkbox(UiText.T("Transparency visible on main window") + "###UiTransparencyVisibleOnMainWindowSettings", ref transparencyVisibleOnMainWindow))
-            changed = true;
         var languageVisibleOnMainWindow = config.UiLanguageVisibleOnMainWindow;
-        if (UiGui.Checkbox(UiText.T("Language visible on main window") + "###UiLanguageVisibleOnMainWindowSettings", ref languageVisibleOnMainWindow))
-        { changed = true; }
         var transparencyEnabled = config.UiTransparencyEnabled;
-        if (UiGui.Checkbox(UiText.T("Transparency") + "###UiTransparencyEnabledSettings", ref transparencyEnabled))
-        { changed = true; }
         var autoFade = config.UiAutoFade;
-        if (UiGui.Checkbox(UiText.T("Auto-fade when unfocused") + "###UiAutoFadeSettings", ref autoFade))
-        { changed = true; }
-        ImGui.BeginDisabled(!transparencyEnabled);
         var opacity = Math.Clamp(config.UiWindowOpacityPercent, 10, 100);
-        ImGui.SetNextItemWidth(180 * MaterialTheme.Metrics.Scale);
-        if (UiGui.SliderInt(UiText.T("Opacity (%)") + "###UiWindowOpacityPercentSettings", ref opacity, 10, 100, "%d%%", ImGuiSliderFlags.AlwaysClamp))
-        { changed = true; }
         var fadedOpacity = Math.Clamp(config.UiFadedOpacityPercent, 10, 100);
-        ImGui.SetNextItemWidth(180 * MaterialTheme.Metrics.Scale);
-        if (UiGui.SliderInt(UiText.T("Unfocused opacity (%)") + "###UiFadedOpacityPercentSettings", ref fadedOpacity, 10, 100, "%d%%", ImGuiSliderFlags.AlwaysClamp))
-        { changed = true; }
-        ImGui.BeginDisabled(!autoFade);
         var delay = float.IsFinite(config.UiUnfocusedDelaySeconds) ? Math.Max(0, config.UiUnfocusedDelaySeconds) : 10;
-        ImGui.SetNextItemWidth(180 * MaterialTheme.Metrics.Scale);
-        if (UiGui.InputFloat(UiText.T("Unfocused delay (seconds)") + "###UiUnfocusedDelaySecondsSettings", ref delay))
-        { delay = float.IsFinite(delay) ? Math.Max(0, delay) : 10; changed = true; }
-        ImGui.EndDisabled();
-        ImGui.EndDisabled();
-        if (changed) AppearancePreferences.Save(config with { UiCompactVisibleOnMainWindow = compactVisibleOnMainWindow, UiTransparencyVisibleOnMainWindow = transparencyVisibleOnMainWindow, UiLanguageVisibleOnMainWindow = languageVisibleOnMainWindow, UiTransparencyEnabled = transparencyEnabled, UiAutoFade = autoFade, UiWindowOpacityPercent = opacity, UiFadedOpacityPercent = fadedOpacity, UiUnfocusedDelaySeconds = delay });
+        var scale = MaterialTheme.Metrics.Scale;
+        var padding = config.Compact ? 12 : 20;
+        float minimum;
+        using (MaterialControls.Push(PublicPresentation.Controls()))
+        {
+            var fieldLabelWidth = new[] { "Background", "Controls", "Text", "LCARS bar 1", "LCARS bar 2", "LCARS bar 3",
+                "Wave colour 1", "Wave colour 2", "Wave colour 3" }.Max(label => MaterialText.Measure(UiText.T(label)).X);
+            var editorWidth = MathF.Ceiling(Math.Max(100 * scale, ImGui.CalcTextSize("#FFFFFF").X + 2 * ImGui.GetStyle().FramePadding.X)
+                + ImGui.GetFrameHeight() + ImGui.GetStyle().ItemInnerSpacing.X);
+            var resetWidth = MaterialText.Measure(UiText.T("Appearance reset")).X + 2 * ImGui.GetStyle().FramePadding.X;
+            minimum = Math.Max((config.Compact ? 298 : 316) * scale,
+                fieldLabelWidth + editorWidth + resetWidth + 3 * ImGui.GetStyle().ItemSpacing.X);
+            minimum = Math.Max(minimum, new[] { "Animation speed (0.1–10x; default 1x)", "Reset colours", "Reset wave colours",
+                "Theme & language", "Main window controls", "Window opacity", "When unfocused", "Unfocused delay (seconds)",
+                "Unfocused opacity (%)" }.Max(label => MaterialText.Measure(UiText.T(label)).X) + 2 * ImGui.GetStyle().FramePadding.X);
+            var metrics = MaterialControls.Metrics;
+            var languageWidth = MaterialText.Measure(Languages.LabelFor(appliedLanguage, "Select...")).X
+                + metrics.Height + 3 * metrics.Gap + Math.Min(metrics.IconSize, metrics.Height);
+            minimum = Math.Max(minimum, languageWidth);
+        }
+        minimum = Math.Max(minimum, new[] { "Compact mode", "Compact visible on main window", "Transparency visible on main window",
+            "Language visible on main window", "Auto-fade when unfocused" }.Max(label => UiGui.CheckboxWidth(label))) + 2 * padding * scale;
+
+        if ((ImGuiP.GetCurrentWindow().Flags & ImGuiWindowFlags.AlwaysAutoResize) != 0)
+        {
+            // Reserve the full padded card width so native popup auto-fit retains both insets after settling.
+            var cursor = ImGui.GetCursorPos();
+            ImGui.Dummy(new Vector2(MathF.Ceiling(minimum), 0));
+            ImGui.SetCursorPos(cursor);
+        }
+        MaterialSettings.Columns("public-appearance-groups", minimum, () =>
+        {
+            PublicPresentation.Panel(() =>
+            {
+                MaterialSkin.Heading(UiText.T("Theme & language"));
+                DrawSelector("settingsAppearance");
+                DrawLcarsSounds();
+            }, padding);
+            ImGui.Spacing();
+            PublicPresentation.Panel(() =>
+            {
+                MaterialSkin.Heading(UiText.T("Main window controls"), 1);
+                DrawCompact("Compact mode");
+                changed |= UiGui.Checkbox(UiText.T("Compact visible on main window") + "###UiCompactVisibleOnMainWindowSettings", ref compactVisibleOnMainWindow);
+                changed |= UiGui.Checkbox(UiText.T("Transparency visible on main window") + "###UiTransparencyVisibleOnMainWindowSettings", ref transparencyVisibleOnMainWindow);
+                changed |= UiGui.Checkbox(UiText.T("Language visible on main window") + "###UiLanguageVisibleOnMainWindowSettings", ref languageVisibleOnMainWindow);
+            }, padding);
+        }, () =>
+        {
+            PublicPresentation.Panel(() =>
+            {
+                MaterialSkin.Heading(UiText.T("Window opacity"), 1);
+                changed |= UiGui.Checkbox(UiText.T("Transparency") + "###UiTransparencyEnabledSettings", ref transparencyEnabled);
+                ImGui.BeginDisabled(!transparencyEnabled);
+                try
+                {
+                    ImGui.SetNextItemWidth(180 * scale);
+                    changed |= UiGui.SliderInt(UiText.T("Opacity (%)") + "###UiWindowOpacityPercentSettings", ref opacity, 10, 100, "%d%%", ImGuiSliderFlags.AlwaysClamp);
+                }
+                finally { ImGui.EndDisabled(); }
+            }, padding);
+            ImGui.Spacing();
+            PublicPresentation.Panel(() =>
+            {
+                MaterialSkin.Heading(UiText.T("When unfocused"), 1);
+                changed |= UiGui.Checkbox(UiText.T("Auto-fade when unfocused") + "###UiAutoFadeSettings", ref autoFade);
+                ImGui.BeginDisabled(!transparencyEnabled);
+                try
+                {
+                    ImGui.SetNextItemWidth(180 * scale);
+                    changed |= UiGui.SliderInt(UiText.T("Unfocused opacity (%)") + "###UiFadedOpacityPercentSettings", ref fadedOpacity, 10, 100, "%d%%", ImGuiSliderFlags.AlwaysClamp);
+                    ImGui.BeginDisabled(!autoFade);
+                    try
+                    {
+                        ImGui.SetNextItemWidth(180 * scale);
+                        if (UiGui.InputFloat(UiText.T("Unfocused delay (seconds)") + "###UiUnfocusedDelaySecondsSettings", ref delay))
+                        { delay = float.IsFinite(delay) ? Math.Max(0, delay) : 10; changed = true; }
+                    }
+                    finally { ImGui.EndDisabled(); }
+                }
+                finally { ImGui.EndDisabled(); }
+            }, padding);
+        }, divider: false);
+        if (changed) AppearancePreferences.Save(AppearancePreferences.Current with { UiCompactVisibleOnMainWindow = compactVisibleOnMainWindow, UiTransparencyVisibleOnMainWindow = transparencyVisibleOnMainWindow, UiLanguageVisibleOnMainWindow = languageVisibleOnMainWindow, UiTransparencyEnabled = transparencyEnabled, UiAutoFade = autoFade, UiWindowOpacityPercent = opacity, UiFadedOpacityPercent = fadedOpacity, UiUnfocusedDelaySeconds = delay });
     }
 
     internal void DrawTransparency()

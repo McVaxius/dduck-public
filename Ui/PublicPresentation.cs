@@ -76,10 +76,61 @@ internal static class PublicPresentation
 
     internal static void Surface(Vector2 min, Vector2 max)
     {
-        if (MaterialTheme.Current.IsLcars) { MaterialLcars.PanelFrame(min, max, 1); return; }
-        var c = MaterialTheme.Current.Colors;
+        var theme = MaterialTheme.Current;
+        if (theme.IsLcars || theme.IsGlassmorphism || theme.IsSpatial || theme.IsCyberpunk)
+        { MaterialSkin.PanelFrame(min, max, 1); return; }
+        var c = theme.Colors;
         MaterialCanvas.Surface(min, max, c.SurfaceContainerHigh, c.Surface, 4 * MaterialTheme.Metrics.Scale);
         ImGui.GetWindowDrawList().AddRect(min, max, MaterialCanvas.Color(c.OutlineVariant), 4 * MaterialTheme.Metrics.Scale);
+    }
+
+    internal static void Panel(Action draw, float padding = 24)
+    {
+        // Presentation only: keep the caller's native IDs while allowing nested tables/cards.
+        var inset = padding * MaterialTheme.Metrics.Scale;
+        var owner = ImGuiP.GetCurrentWindow();
+        var origin = ImGui.GetCursorScreenPos();
+        var width = Math.Max(1, Math.Min(ImGui.GetContentRegionAvail().X, owner.InnerClipRect.Max.X - origin.X));
+        var savedWork = owner.WorkRect;
+        var savedContent = owner.ContentRegionRect;
+        var cursor = ImGui.GetCursorPos();
+        var list = ImGui.GetWindowDrawList();
+        var splitter = ImGui.ImDrawListSplitter();
+        splitter.Split(list, 2);
+        splitter.SetCurrentChannel(list, 1);
+        ImGui.BeginGroup();
+        ImGui.SetCursorPos(cursor + new Vector2(0, inset));
+        ImGui.Indent(inset);
+        try
+        {
+            var work = savedWork;
+            work.Min.X = origin.X + inset;
+            work.Max.X = Math.Max(work.Min.X + 1, origin.X + width - inset);
+            owner.WorkRect = work;
+            var content = savedContent;
+            content.Min.X = work.Min.X;
+            content.Max.X = work.Max.X;
+            owner.ContentRegionRect = content;
+            ImGui.PushTextWrapPos(cursor.X + width - inset);
+            ImGui.PushClipRect(new(work.Min.X, owner.ClipRect.Min.Y), new(work.Max.X, owner.ClipRect.Max.Y), true);
+            try { draw(); }
+            finally { ImGui.PopClipRect(); ImGui.PopTextWrapPos(); }
+            ImGui.Dummy(new Vector2(Math.Max(1, width - inset * 2), inset));
+        }
+        finally
+        {
+            owner.WorkRect = savedWork;
+            owner.ContentRegionRect = savedContent;
+            ImGui.Unindent(inset);
+            ImGui.EndGroup();
+            var bottom = Math.Max(origin.Y + inset * 2, ImGui.GetItemRectMax().Y);
+            try
+            {
+                splitter.SetCurrentChannel(list, 0);
+                Surface(origin, new Vector2(origin.X + width, bottom));
+            }
+            finally { splitter.Merge(list); splitter.Destroy(); }
+        }
     }
 
     internal static void Brand(Vector2 origin, float size)
