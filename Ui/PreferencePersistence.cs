@@ -17,7 +17,7 @@ internal sealed class PreferencePersistence(IDalamudPluginInterface pluginInterf
     {
         var data = Read();
         var migrated = data["UiCompactDefaultsApplied"]?.GetValue<bool>() == true;
-        var values = new AppearanceValues(data["UiLanguage"]?.GetValue<string>() ?? "en", data["UiAccentRgb"]?.GetValue<uint>() ?? PublicPresentation.ReferenceAccent,
+        var values = new AppearanceValues(data["UiLanguage"]?.GetValue<string>() ?? "en", data["UiAccentRgb"]?.GetValue<uint>() ?? AppearancePreferences.DefaultAccentRgb,
             !migrated || (data["UiCompact"]?.GetValue<bool>() ?? true))
         {
             UiColors = data["UiColors"]?.Deserialize<AethertekUI.MaterialColorSettings>(new JsonSerializerOptions { Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() } }) ?? new(),

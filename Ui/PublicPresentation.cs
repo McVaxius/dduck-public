@@ -32,6 +32,9 @@ internal static class PublicPresentation
     internal static MaterialTheme Theme(uint accent, MaterialColorSettings colorSettings)
     {
         accent &= 0xFFFFFF;
+        var automatic = colorSettings.Mode == MaterialColorMode.Auto;
+        // The old default is rendered as teal; saved choices and other modes are retained.
+        if (automatic && accent == ReferenceAccent) accent = AppearancePreferences.DefaultAccentRgb;
         var selected = Rgb(accent);
         var reference = Rgb(ReferenceAccent);
         var seed = MaterialColor.LabToLch(MaterialColor.SrgbToOklab(new(selected.X, selected.Y, selected.Z)));
@@ -41,13 +44,16 @@ internal static class PublicPresentation
         Vector4 Relative(uint rgb)
         {
             var color = Rgb(rgb);
-            if (accent == ReferenceAccent) return color;
+            if (!automatic && accent == ReferenceAccent) return color;
             var lch = MaterialColor.LabToLch(MaterialColor.SrgbToOklab(new(color.X, color.Y, color.Z)));
-            return new(MaterialColor.GamutMap(lch.X, lch.Y * chroma, lch.Z + hue), 1);
+            return automatic
+                ? new(MaterialColor.GamutMap(lch.X, seed.Y < .001f ? 0 : lch.Y, seed.Z), 1)
+                : new(MaterialColor.GamutMap(lch.X, lch.Y * chroma, lch.Z + hue), 1);
         }
         var background = Relative(0x13171E);
         var foreground = Relative(0xF6F1FF);
-        var primary = Relative(ReferenceAccent);
+        var primary = automatic ? selected : Relative(ReferenceAccent);
+        var onPrimary = MaterialColor.Contrast(primary, background) >= MaterialColor.Contrast(primary, foreground) ? background : foreground;
         var palette = new OklchPaletteGenerator().Generate(new(selected.X, selected.Y, selected.Z));
         var colors = new MaterialColorScheme(palette)
         {
@@ -57,10 +63,12 @@ internal static class PublicPresentation
             SurfaceContainer = Relative(0x1E232E), SurfaceContainerHigh = Relative(0x252B38), SurfaceContainerHighest = Relative(0x252B38),
             SurfaceVariant = Relative(0x303447), OnSurfaceVariant = Relative(0xB9C9E0),
             Outline = Relative(0x758195), OutlineVariant = Relative(0x343D49),
-            Primary = primary, OnPrimary = MaterialColor.Contrast(primary, background) >= MaterialColor.Contrast(primary, foreground) ? background : foreground,
+            Primary = primary, OnPrimary = onPrimary,
             PrimaryContainer = Relative(0x292038), OnPrimaryContainer = foreground,
-            Secondary = Relative(0x5D3DD1), OnSecondary = background, SecondaryContainer = Relative(0x303447), OnSecondaryContainer = foreground,
-            Tertiary = Relative(0xAC77ED), OnTertiary = background, TertiaryContainer = Relative(0x302B40), OnTertiaryContainer = foreground,
+            Secondary = automatic ? primary : Relative(0x5D3DD1), OnSecondary = automatic ? onPrimary : background,
+            SecondaryContainer = Relative(0x303447), OnSecondaryContainer = foreground,
+            Tertiary = automatic ? primary : Relative(0xAC77ED), OnTertiary = automatic ? onPrimary : background,
+            TertiaryContainer = Relative(0x302B40), OnTertiaryContainer = foreground,
             InverseSurface = foreground, InverseOnSurface = background, InversePrimary = Relative(0x7641B0),
         };
         return new(colorSettings.Apply(colors), MaterialDensity.Standard) { SurfaceOpacity = 1 };

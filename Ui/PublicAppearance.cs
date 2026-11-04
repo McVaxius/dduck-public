@@ -212,7 +212,7 @@ internal sealed class PublicAppearance : IDisposable
                 WaveColors = UiText.T("Wave colours"), GlassWave1 = UiText.T("Wave colour 1"),
                 GlassWave2 = UiText.T("Wave colour 2"), GlassWave3 = UiText.T("Wave colour 3"),
                 ResetWaveColors = UiText.T("Reset wave colours"),
-            }, new MaterialColorSettings(), MaterialColorSettings.Rgb(PublicPresentation.ReferenceAccent),
+            }, new MaterialColorSettings(), MaterialColorSettings.Rgb(AppearancePreferences.DefaultAccentRgb),
             AppearancePreferences.Current.Compact ? 298 : 316))
         {
             AppearancePreferences.Save(AppearancePreferences.Current with { UiColors = colorDraft, AccentRgb = MaterialColorSettings.ToRgb(accentDraft) });

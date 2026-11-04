@@ -17,9 +17,10 @@ public readonly record struct AppearanceValues(string Language, uint AccentRgb, 
 
 public static class AppearancePreferences
 {
+    internal const uint DefaultAccentRgb = 0x00ACAD;
     private static Func<AppearanceValues>? read;
     private static Action<AppearanceValues>? save;
-    private static AppearanceValues values = new("en", 0xA92CF1, true);
+    private static AppearanceValues values = new("en", DefaultAccentRgb, true);
 
     public static AppearanceValues Current => read?.Invoke() ?? values;
     public static void Save(AppearanceValues next)
