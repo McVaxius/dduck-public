@@ -1,10 +1,12 @@
 # Deep Ducking public host
 
+Public-host **2.0.0.4** updates the shared UI controls and glass rendering to AethertekUI 0.3.1. Updates for the remaining existing consumers are in progress.
+
 Compact mode is enabled once on upgrade. Main Compact and Transparency shortcuts start hidden; Window appearance can restore either shortcut independently and change density or opacity. Later loads retain those choices and unrelated settings.
 
 This repository contains the complete DDuck public host: introduction, authenticated module loader, manifest validation, and access IPC. Open it with `/deepducking`; `/dduck` remains an alias. `/dd` is skipped with a warning when DailyDuty is installed, even if unloaded, or another plugin owns the command. Only commands registered by this host are removed on unload. Automation source remains in `Z:\DDuck`; the public shell builds independently.
 
-The public version is **2.0.0.3**. Its CLR assembly identity is **1.0.0.0**, the stable module ABI. Private module versions advance independently.
+The public version is **2.0.0.4**. Its CLR assembly identity is **1.0.0.0**, the stable module ABI. Private module versions advance independently.
 
 The introduction provides regular and compact layouts, colour and language selectors, and managed host fonts. The language choices include Vietnamese, Brazilian Portuguese, Indonesian, Polish, Turkish and Hindi. Colour offers a single-accent teal Auto default, Picker, LCARS, Glassmorphism, Spatial and Cyberpunk. Picker and the three materials retain independent Background, Controls and Text values with per-role and palette resets. LCARS retains segmented rails, panel frames and outlined controls with independent Background and three bar colours. Glassmorphism includes optional animation, speed and three editable wave colours. Each choice is retained when switching modes and reloading. LCARS UI tones start muted; Settings and the titlebar speaker share the same saved preference. Its appearance preferences use the existing plugin configuration and are shared with the authenticated module while preserving private and unknown configuration fields. Window appearance keeps colour, language and compact controls available when their Main shortcuts are hidden. Transparency defaults to 100% opacity and fades to 50% after ten unfocused seconds; settings retain both opacity values and the delay. The titlebar keeps appearance and installed-access shortcuts. Main branding and the expanded/collapsed title use the packaged icon, with reserved space while its texture loads. In regular mode, access instructions and the check button sit beside each other when space permits and stack in narrow windows. Community buttons use shared Discord and Ko-fi artwork; access-failure text wraps to the visible window width. Image changes still require game/GPU acceptance; the public host starts automation only through its separately authenticated module.
 
@@ -57,7 +59,7 @@ The public package is `DDuck\latest.zip` beneath the selected output directory (
 
 GitHub Actions uses `.github/workflows/build-release.yml` to build and release on pushes to `master`, `v*` tags, or a manual workflow run. It checks out the public host and AethertekUI in sibling directories using the consumer's read-only `AETHERTEKUI_DEPLOY_KEY`, installs .NET 10.0.201, downloads Dalamud references and passes that distribution to restore/build. It attaches `latest.zip` and `DDuck.json` to the versioned release, following the MOM/DhogNav public workflow.
 
-The dependency checkout follows published AethertekUI main so compatible API additions are available without per-plugin pin updates. Publish shared library APIs before consumer changes. Authentication uses the repository-specific read-only SSH deploy key, which has no expiration; checkout does not persist credentials.
+The dependency checkout is pinned to reviewed AethertekUI 0.3.1 at `21e76f87fefe7989519f010eb817e0037de6555f`. Publish shared library APIs before consumer changes. Authentication uses the repository-specific read-only SSH deploy key, which has no expiration; checkout does not persist credentials.
 
 Version bumper H (`Z:\dhogbump\bump_gui_h.py`) includes a separate `DDuck-public` row. It updates the public project, BuildInfo, manifest and repository feed together while preserving CLR ABI `1.0.0.0` and DDuck's private version.
 
