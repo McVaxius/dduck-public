@@ -32,6 +32,8 @@ internal sealed class PublicAppearance : IDisposable
     private uint appliedAccent;
     private Vector3 accentDraft;
     private MaterialColorSettings colorDraft = new();
+    private int contrastDraft = 50;
+    private int appliedContrast = -1;
     private MaterialColorSettings? appliedSavedColors;
     private MaterialColorSettings? appliedColors;
     private int checkedGeneration = -1;
@@ -71,6 +73,9 @@ internal sealed class PublicAppearance : IDisposable
             var rgb = PublicPresentation.Rgb(appliedAccent);
             accentDraft = new(rgb.X, rgb.Y, rgb.Z);
         }
+        var savedContrast = AppearancePreferences.Current.UiHighlightContrastPercent;
+        if (savedContrast != appliedContrast) { appliedContrast = savedContrast; contrastDraft = savedContrast; }
+        theme.HighlightContrastPercent = contrastDraft;
         theme.Density = AppearancePreferences.Current.Compact ? MaterialDensity.Compact : MaterialDensity.Standard;
         if (appliedSoundsMuted != AppearancePreferences.Current.UiLcarsSoundsMuted)
         {
@@ -197,6 +202,17 @@ internal sealed class PublicAppearance : IDisposable
     internal void DrawSelector(string id = "appearance", bool showLanguage = true)
     {
         using var controls = MaterialControls.Push(PublicPresentation.Controls());
+        ImGui.PushID(id);
+        try
+        {
+            MaterialSettings.Field("##UiHighlightContrastPercent", UiText.T("Highlight contrast"), 180 * MaterialTheme.Metrics.Scale,
+                native => { using var field = MaterialSkin.NativeFieldStyle(); return ImGui.SliderInt(native, ref contrastDraft, 0, 100, "%d%%", ImGuiSliderFlags.AlwaysClamp); });
+            if (ImGui.IsItemDeactivatedAfterEdit())
+                AppearancePreferences.Save(AppearancePreferences.Current with { UiHighlightContrastPercent = contrastDraft });
+            MaterialText.Text(UiText.T("Makes controls and selection states more distinct."), Math.Max(1, ImGui.GetContentRegionAvail().X));
+            ImGui.Spacing();
+        }
+        finally { ImGui.PopID(); }
         if (MaterialAppearanceSelector.DrawColors(id, ref colorDraft, ref accentDraft,
             new(UiText.T("Color"), UiText.T("Language"), UiText.T("Teal"), UiText.T("Blue"), UiText.T("Pink"), UiText.T("Custom RGB")),
             new(UiText.T("Auto"), UiText.T("Picker"), UiText.T("Default"), UiText.T("Background, controls and text follow your theme."),

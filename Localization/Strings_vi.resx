@@ -245,4 +245,6 @@
   <data name="Main window controls" xml:space="preserve"><value>Điều khiển cửa sổ chính</value></data>
   <data name="Window opacity" xml:space="preserve"><value>Độ mờ cửa sổ</value></data>
   <data name="When unfocused" xml:space="preserve"><value>Khi không được chọn</value></data>
+  <data name="Highlight contrast" xml:space="preserve"><value>Độ tương phản tô sáng</value></data>
+  <data name="Makes controls and selection states more distinct." xml:space="preserve"><value>Giúp phân biệt rõ hơn các điều khiển và trạng thái được chọn.</value></data>
 </root>

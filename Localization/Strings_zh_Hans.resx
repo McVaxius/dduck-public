@@ -245,4 +245,6 @@
   <data name="Main window controls" xml:space="preserve"><value>主窗口控件</value></data>
   <data name="Window opacity" xml:space="preserve"><value>窗口不透明度</value></data>
   <data name="When unfocused" xml:space="preserve"><value>失去焦点时</value></data>
+  <data name="Highlight contrast" xml:space="preserve"><value>高亮对比度</value></data>
+  <data name="Makes controls and selection states more distinct." xml:space="preserve"><value>让控件与选中状态更容易区分。</value></data>
 </root>

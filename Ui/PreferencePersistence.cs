@@ -21,6 +21,7 @@ internal sealed class PreferencePersistence(IDalamudPluginInterface pluginInterf
             !migrated || (data["UiCompact"]?.GetValue<bool>() ?? true))
         {
             UiColors = data["UiColors"]?.Deserialize<AethertekUI.MaterialColorSettings>(new JsonSerializerOptions { Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() } }) ?? new(),
+            UiHighlightContrastPercent = data["UiHighlightContrastPercent"]?.GetValue<int>() ?? 50,
             UiLcarsSoundsMuted = data["UiLcarsSoundsMuted"]?.GetValue<bool>() ?? true,
             UiCompactVisibleOnMainWindow = migrated && (data["UiCompactVisibleOnMainWindow"]?.GetValue<bool>() ?? false),
             UiTransparencyVisibleOnMainWindow = migrated && (data["UiTransparencyVisibleOnMainWindow"]?.GetValue<bool>() ?? false),
@@ -43,6 +44,7 @@ internal sealed class PreferencePersistence(IDalamudPluginInterface pluginInterf
         config.UiLanguage = values.Language;
         config.UiAccentRgb = values.AccentRgb;
         config.UiColors = values.UiColors;
+        config.UiHighlightContrastPercent = values.UiHighlightContrastPercent;
         config.UiLcarsSoundsMuted = values.UiLcarsSoundsMuted;
         config.UiCompact = values.Compact;
         config.UiCompactVisibleOnMainWindow = values.UiCompactVisibleOnMainWindow;
@@ -61,6 +63,7 @@ internal sealed class PreferencePersistence(IDalamudPluginInterface pluginInterf
         data["UiLanguage"] = values.Language;
         data["UiAccentRgb"] = values.AccentRgb;
         data["UiColors"] = JsonSerializer.SerializeToNode(values.UiColors);
+        data["UiHighlightContrastPercent"] = values.UiHighlightContrastPercent;
         data["UiLcarsSoundsMuted"] = values.UiLcarsSoundsMuted;
         data["UiCompact"] = values.Compact;
         data["UiCompactVisibleOnMainWindow"] = values.UiCompactVisibleOnMainWindow;

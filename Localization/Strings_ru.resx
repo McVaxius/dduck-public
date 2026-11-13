@@ -245,4 +245,6 @@
   <data name="Main window controls" xml:space="preserve"><value>Элементы главного окна</value></data>
   <data name="Window opacity" xml:space="preserve"><value>Непрозрачность окна</value></data>
   <data name="When unfocused" xml:space="preserve"><value>Когда окно не в фокусе</value></data>
+  <data name="Highlight contrast" xml:space="preserve"><value>Контраст выделения</value></data>
+  <data name="Makes controls and selection states more distinct." xml:space="preserve"><value>Делает элементы управления и состояния выбора более различимыми.</value></data>
 </root>

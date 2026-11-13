@@ -245,4 +245,6 @@
   <data name="Main window controls" xml:space="preserve"><value>Bedienelemente im Hauptfenster</value></data>
   <data name="Window opacity" xml:space="preserve"><value>Fensterdeckkraft</value></data>
   <data name="When unfocused" xml:space="preserve"><value>Ohne Fokus</value></data>
+  <data name="Highlight contrast" xml:space="preserve"><value>Hervorhebungskontrast</value></data>
+  <data name="Makes controls and selection states more distinct." xml:space="preserve"><value>Hebt Steuerelemente und Auswahlzustände deutlicher hervor.</value></data>
 </root>

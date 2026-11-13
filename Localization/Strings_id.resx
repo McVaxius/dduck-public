@@ -245,4 +245,6 @@
   <data name="Main window controls" xml:space="preserve"><value>Kontrol jendela utama</value></data>
   <data name="Window opacity" xml:space="preserve"><value>Opasitas jendela</value></data>
   <data name="When unfocused" xml:space="preserve"><value>Saat tidak aktif</value></data>
+  <data name="Highlight contrast" xml:space="preserve"><value>Kontras sorotan</value></data>
+  <data name="Makes controls and selection states more distinct." xml:space="preserve"><value>Membuat kontrol dan status pilihan lebih mudah dibedakan.</value></data>
 </root>

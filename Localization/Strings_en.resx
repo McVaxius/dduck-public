@@ -245,4 +245,6 @@
   <data name="Main window controls" xml:space="preserve"><value>Main window controls</value></data>
   <data name="Window opacity" xml:space="preserve"><value>Window opacity</value></data>
   <data name="When unfocused" xml:space="preserve"><value>When unfocused</value></data>
+  <data name="Highlight contrast" xml:space="preserve"><value>Highlight contrast</value></data>
+  <data name="Makes controls and selection states more distinct." xml:space="preserve"><value>Makes controls and selection states more distinct.</value></data>
 </root>

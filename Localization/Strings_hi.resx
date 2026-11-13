@@ -261,4 +261,6 @@
   <data name="Main window controls" xml:space="preserve"><value>मुख्य विंडो नियंत्रण</value></data>
   <data name="Window opacity" xml:space="preserve"><value>विंडो की अपारदर्शिता</value></data>
   <data name="When unfocused" xml:space="preserve"><value>फ़ोकस में न होने पर</value></data>
+  <data name="Highlight contrast" xml:space="preserve"><value>हाइलाइट कंट्रास्ट</value></data>
+  <data name="Makes controls and selection states more distinct." xml:space="preserve"><value>नियंत्रणों और चयन स्थितियों को अधिक स्पष्ट बनाता है।</value></data>
 </root>

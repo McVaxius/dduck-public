@@ -245,4 +245,6 @@
   <data name="Main window controls" xml:space="preserve"><value>메인 창 컨트롤</value></data>
   <data name="Window opacity" xml:space="preserve"><value>창 불투명도</value></data>
   <data name="When unfocused" xml:space="preserve"><value>포커스가 없을 때</value></data>
+  <data name="Highlight contrast" xml:space="preserve"><value>강조 대비</value></data>
+  <data name="Makes controls and selection states more distinct." xml:space="preserve"><value>컨트롤과 선택 상태를 더 뚜렷하게 표시합니다.</value></data>
 </root>
