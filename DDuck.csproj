@@ -35,12 +35,14 @@
     <!-- Package explicit public files; the CLR ABI version stays 1.0.0.0. -->
     <PropertyGroup><_PublicPackageDir>$(IntermediateOutputPath)public-package/</_PublicPackageDir></PropertyGroup>
     <RemoveDir Directories="$(_PublicPackageDir)" />
-    <MakeDir Directories="$(_PublicPackageDir);$(_PublicPackageDir)Notices;$(TargetDir)$(AssemblyName)" />
+    <MakeDir Directories="$(_PublicPackageDir);$(_PublicPackageDir)Notices;$(_PublicPackageDir)Fonts/Selawik;$(TargetDir)$(AssemblyName)" />
     <ItemGroup>
       <_PublicPackageFiles Include="$(TargetPath);$(TargetDir)$(AssemblyName).deps.json;$(TargetDir)AethertekUI.dll;$(TargetDir)AethertekUI.Dalamud.dll;$(TargetDir)Glasswork.dll;$(TargetDir)Glasswork.Glass.dll;$(TargetDir)Glasswork.Backend.dll;$(ProjectDir)$(AssemblyName).json;$(ProjectDir)icon.png;$(ProjectDir)README.md;$(ProjectDir)LICENSE;$(ProjectDir)THIRD-PARTY-NOTICES.txt" />
+      <_PublicFontFiles Include="$(TargetDir)Fonts/Selawik/selawk.ttf;$(TargetDir)Fonts/Selawik/selawksb.ttf;$(TargetDir)Fonts/Selawik/selawkb.ttf;$(TargetDir)Fonts/Selawik/LICENSE.txt" />
     </ItemGroup>
     <Copy SourceFiles="@(_PublicPackageFiles)" DestinationFolder="$(_PublicPackageDir)" />
     <Copy SourceFiles="$(TargetDir)Notices/Glasswork.MIT.txt" DestinationFolder="$(_PublicPackageDir)Notices" />
+    <Copy SourceFiles="@(_PublicFontFiles)" DestinationFolder="$(_PublicPackageDir)Fonts/Selawik" />
     <Copy SourceFiles="$(ProjectDir)$(AssemblyName).json" DestinationFolder="$(TargetDir)$(AssemblyName)" />
     <ZipDirectory SourceDirectory="$(_PublicPackageDir)" DestinationFile="$(TargetDir)$(AssemblyName)/latest.zip" Overwrite="true" />
   </Target>

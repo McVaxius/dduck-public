@@ -51,7 +51,8 @@ internal sealed class PublicAppearance : IDisposable
             fonts?.Dispose();
             text?.Dispose();
             text = new(language, PushFont);
-            fonts = new(pluginInterface.UiBuilder.FontAtlas, text.GlyphRanges(), language);
+            fonts = new(pluginInterface.UiBuilder.FontAtlas, text.GlyphRanges(), language,
+                pluginInterface.AssemblyLocation.DirectoryName!);
             appliedLanguage = language;
             checkedGeneration = -1;
             hindiAvailable = false;
@@ -251,7 +252,8 @@ internal sealed class PublicAppearance : IDisposable
         shapedText = new(textures);
         appliedLanguage = UiText.Languages.Any(l => l.Code == AppearancePreferences.Current.Language) ? AppearancePreferences.Current.Language : "en";
         text = new(appliedLanguage, PushFont);
-        fonts = new(pluginInterface.UiBuilder.FontAtlas, text.GlyphRanges(), appliedLanguage);
+        fonts = new(pluginInterface.UiBuilder.FontAtlas, text.GlyphRanges(), appliedLanguage,
+            pluginInterface.AssemblyLocation.DirectoryName!);
         appliedAccent = AppearancePreferences.Current.AccentRgb & 0xFFFFFF;
         colorDraft = AppearancePreferences.Current.UiColors ?? new();
         appliedSavedColors = appliedColors = colorDraft;

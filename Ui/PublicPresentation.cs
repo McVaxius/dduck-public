@@ -19,7 +19,6 @@ internal static class PublicPresentation
     // Actual author/version and native instructions replace sample reference text.
     internal const uint ReferenceAccent = 0xA92CF1;
     internal static readonly float[] FontSizes = [16, 16, 46, 28, 26, 22];
-    internal static readonly string[] FontFiles = ["segoeui.ttf", "seguisb.ttf", "seguisb.ttf", "seguisb.ttf", "seguisb.ttf", "seguisb.ttf"];
     internal static float AtlasHeight(UiFontRole role) => FontSizes[(int)role] * 4 / 3;
     internal static bool Compact => MaterialTheme.Current.Density == MaterialDensity.Compact;
     internal static float HeaderHeight => Compact ? 68 : 82;
